@@ -1,66 +1,12 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#050a1e">
-<title>Dofamin — путь к впечатлению</title>
-<style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050a1e}body{min-height:100vh;color:#f7f8ff;font-family:Inter,Manrope,system-ui,-apple-system,sans-serif;overflow-x:hidden;background:radial-gradient(circle at 67% 50%,rgba(63,71,255,.18),transparent 32%),radial-gradient(circle at 42% 82%,rgba(47,231,215,.08),transparent 28%),#050a1e}.app{min-height:100vh;max-width:1380px;margin:auto;padding:28px 4vw 20px;display:flex;flex-direction:column}.topbar{display:flex;justify-content:space-between;align-items:center}.brand{font-size:21px;font-weight:850;letter-spacing:-.055em}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:10px;background:radial-gradient(circle at 30% 25%,#fff,#4ce9dc 42%,#675cff);box-shadow:0 0 20px #4ce9dc}.tag{font-size:10px;letter-spacing:.2em;color:#68749b}.hero{flex:1;display:grid;grid-template-columns:.66fr 1.34fr;align-items:center;gap:1vw}.copy{position:relative;z-index:3}.eyebrow{color:#4ce9dc;font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}.copy h1{margin:17px 0 25px;font-size:clamp(62px,7.3vw,108px);line-height:.84;letter-spacing:-.085em}.copy h1 span{display:block;background:linear-gradient(100deg,#fff 5%,#8ef4e8 48%,#a990ff);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{max-width:440px;margin:0 0 28px;color:#8996bc;font-size:16px;line-height:1.65}.start{border:1px solid rgba(255,255,255,.13);border-radius:17px;padding:15px 20px;color:#fff;background:linear-gradient(105deg,#6652ff,#27d6ca);box-shadow:0 14px 40px rgba(65,76,255,.18);font:800 14px inherit;cursor:pointer}.start b{margin-left:24px;font-size:19px}.stage{position:relative;min-height:690px;display:grid;place-items:center}.molecule{position:relative;width:min(720px,96vw);aspect-ratio:1}.molecule:before{content:"";position:absolute;inset:15%;border-radius:50%;background:radial-gradient(circle,rgba(71,235,222,.13),rgba(88,78,255,.07) 42%,transparent 70%);filter:blur(18px)}svg{position:absolute;inset:5%;width:90%;height:90%;overflow:visible}.orbit{fill:none;stroke:rgba(75,232,220,.15);stroke-width:1}.orbit2{stroke:#6d60ff;stroke-opacity:.11}.orbit3{stroke:#fff;stroke-opacity:.055}.bond{fill:none;stroke:url(#bond);stroke-linecap:round;filter:url(#bondGlow)}.bond.back{opacity:.45;stroke-width:10}.bond.main{stroke-width:14}.ring-shadow{fill:#06102b;stroke:rgba(76,233,220,.16);stroke-width:20;filter:url(#shadow)}.ring-inner{fill:none;stroke:url(#ring);stroke-width:12;stroke-linecap:round;filter:url(#glow)}.ring-line{fill:none;stroke:#d8fffb;stroke-width:3;opacity:.9}.atom{stroke:rgba(220,255,252,.45);stroke-width:2;filter:url(#atomGlow)}.path{position:absolute;inset:0;z-index:5}.node{position:absolute;width:86px;height:86px;border-radius:50%;border:1px solid rgba(183,221,255,.28);background:linear-gradient(145deg,rgba(88,150,190,.28),rgba(37,42,93,.54));backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 35px rgba(0,0,0,.28),0 0 20px rgba(68,210,221,.05);color:#dce5ff;font-size:10px;font-weight:850;line-height:1.18;letter-spacing:.035em;text-align:center;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease,background .25s ease}.node:after{content:"";position:absolute;inset:7px;border-radius:50%;border:1px solid rgba(255,255,255,.08)}.node:hover,.node.active{transform:scale(1.1);border-color:rgba(76,233,220,.75);background:linear-gradient(145deg,rgba(74,213,207,.34),rgba(56,49,124,.62));box-shadow:0 0 35px rgba(76,233,220,.24),inset 0 1px 0 rgba(255,255,255,.35)}.n1{left:50%;top:8%;transform:translateX(-50%)}.n2{right:7%;top:29%}.n3{right:7%;bottom:18%}.n4{left:50%;bottom:7%;transform:translateX(-50%)}.n5{left:7%;bottom:18%}.n6{left:7%;top:29%}.node.n1:hover,.node.n1.active,.node.n4:hover,.node.n4.active{transform:translateX(-50%) scale(1.1)}.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:6;width:142px;height:142px;border-radius:50%;display:grid;place-items:center;text-align:center;border:1px solid rgba(143,222,255,.18);background:radial-gradient(circle at 35% 28%,rgba(26,47,92,.82),rgba(4,12,34,.88));backdrop-filter:blur(18px);box-shadow:inset 0 1px 0 rgba(255,255,255,.13),0 0 60px rgba(69,228,220,.08)}.center strong{display:block;font-size:15px;letter-spacing:.02em}.center span{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8d9ac0}.info{position:absolute;left:50%;bottom:1%;transform:translate(-50%,16px);z-index:12;width:min(410px,76%);padding:16px 20px;border:1px solid rgba(255,255,255,.13);border-radius:20px;background:rgba(7,13,37,.76);backdrop-filter:blur(22px);box-shadow:0 25px 70px rgba(0,0,0,.38);opacity:0;pointer-events:none;transition:.3s ease}.info.show{opacity:1;transform:translate(-50%,0)}.info small{color:#4ce9dc;font-size:9px;letter-spacing:.16em}.info h2{margin:6px 0 4px;font-size:20px;letter-spacing:-.04em}.info p{margin:0;color:#8e9abb;font-size:12px;line-height:1.5}.hint{position:absolute;right:5%;bottom:5%;color:#5f6b8e;font-size:9px;letter-spacing:.13em;text-transform:uppercase}.footer{border-top:1px solid rgba(255,255,255,.07);padding-top:14px;color:#596684;font-size:10px}
-@media(max-width:900px){.app{padding:22px 18px 18px}.hero{grid-template-columns:1fr}.copy{padding-top:6vh}.stage{min-height:560px;margin-top:-10px}.molecule{width:min(700px,112vw)}.node{width:72px;height:72px;font-size:9px}.center{width:116px;height:116px}.center strong{font-size:13px}.copy h1{font-size:65px}.lead{font-size:15px}}
-@media(max-width:560px){.tag{display:none}.copy{padding-top:5vh}.stage{min-height:480px}.molecule{width:122vw;margin-left:-11vw}.node{width:57px;height:57px;font-size:7px}.n1{top:10%}.n2{right:3%;top:31%}.n3{right:3%;bottom:17%}.n4{bottom:6%}.n5{left:3%;bottom:17%}.n6{left:3%;top:31%}.center{width:88px;height:88px}.center strong{font-size:10px}.center span{font-size:7px}.hint{display:none}.info{width:90%}}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05091d">
+<meta http-equiv="refresh" content="0; url=./bond-test.html">
+<title>Dofamin</title>
+<script>location.replace('./bond-test.html');</script>
 </head>
-<body>
-<main class="app">
-<header class="topbar"><div class="brand"><span class="dot"></span>dofamin</div><div class="tag">ПУТЬ К ВПЕЧАТЛЕНИЮ</div></header>
-<section class="hero">
-<div class="copy"><div class="eyebrow">не дейтинг. впечатление.</div><h1>Найди<br><span>своё</span><br>впечатление</h1><p class="lead">Пройди путь по молекуле дофамина и получи подборку впечатлений, которые тебе подойдут.</p><button class="start" id="start">Начать путь <b>→</b></button></div>
-<div class="stage">
-<div class="molecule">
-<svg viewBox="0 0 620 620" aria-label="Путь по молекуле дофамина">
-<defs>
-<radialGradient id="carbon" cx="27%" cy="18%"><stop stop-color="#fff"/><stop offset=".13" stop-color="#d8fffb"/><stop offset=".34" stop-color="#4ce9dc"/><stop offset=".7" stop-color="#5964ff"/><stop offset="1" stop-color="#21104f"/></radialGradient>
-<linearGradient id="bond" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b8fff8"/><stop offset=".38" stop-color="#4ce9dc"/><stop offset=".72" stop-color="#7261ff"/><stop offset="1" stop-color="#c091ff"/></linearGradient>
-<linearGradient id="ring" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dffffb"/><stop offset=".35" stop-color="#4ce9dc"/><stop offset=".65" stop-color="#7562ff"/><stop offset="1" stop-color="#d09aff"/></linearGradient>
-<filter id="glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="bondGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="atomGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="shadow"><feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#00020f" flood-opacity=".65"/></filter>
-</defs>
-<!-- атмосфера вокруг маршрута -->
-<circle class="orbit" cx="310" cy="310" r="195"/><circle class="orbit orbit2" cx="310" cy="310" r="225"/><circle class="orbit orbit3" cx="310" cy="310" r="252"/>
-<!-- тонкие частицы -->
-<g fill="#4ce9dc" opacity=".7"><circle cx="108" cy="244" r="2"/><circle cx="493" cy="143" r="2"/><circle cx="514" cy="428" r="2"/><circle cx="151" cy="492" r="2"/><circle cx="430" cy="510" r="2"/><circle cx="205" cy="104" r="2"/></g>
-<!-- бензольное кольцо: главный объект -->
-<path class="ring-shadow" d="M310 173L429 242L429 378L310 447L191 378L191 242Z"/>
-<path class="ring-inner" d="M310 180L421 245L421 375L310 440L199 375L199 245Z"/>
-<path class="ring-line" d="M310 202L400 255M400 365L310 418M220 365L220 255"/>
-<!-- объёмные атомы кольца -->
-<g fill="url(#carbon)" class="atom"><circle cx="310" cy="180" r="31"/><circle cx="421" cy="245" r="31"/><circle cx="421" cy="375" r="31"/><circle cx="310" cy="440" r="31"/><circle cx="199" cy="375" r="31"/><circle cx="199" cy="245" r="31"/></g>
-<!-- маленькие световые блики -->
-<g fill="#fff" opacity=".9"><circle cx="301" cy="169" r="4.5"/><circle cx="412" cy="234" r="4.5"/><circle cx="190" cy="234" r="4.5"/><circle cx="301" cy="429" r="4.5"/></g>
-</svg>
-<div class="path">
-<button class="node n1" data-title="Настроение" data-text="Сначала определяем, какое состояние хочется получить от выхода.">01<br>НАСТРОЕНИЕ</button>
-<button class="node n2" data-title="Компания" data-text="Решаем, с кем хочется разделить будущий опыт — или оставить его себе.">02<br>КОМПАНИЯ</button>
-<button class="node n3" data-title="Риск" data-text="Определяем, насколько далеко готовы отойти от привычного сценария.">03<br>РИСК</button>
-<button class="node n4" data-title="Город" data-text="Место становится частью впечатления, а не бесконечным каталогом вариантов.">04<br>ГОРОД</button>
-<button class="node n5" data-title="Сюрприз" data-text="Оставляем пространство для случайности и неожиданного опыта.">05<br>СЮРПРИЗ</button>
-<button class="node n6" data-title="Впечатление" data-text="Финальная точка — конкретный опыт, который хочется прожить и разделить.">06<br>ВПЕЧАТЛЕНИЕ</button>
-</div>
-<div class="center"><div><strong>путь</strong><br><span>к впечатлению</span></div></div><div class="hint">нажми на точку</div>
-</div>
-<div class="info" id="info"><small id="infoStep">ШАГ</small><h2 id="infoTitle"></h2><p id="infoText"></p></div>
-</div>
-</section>
-<footer class="footer">DOFAMIN · не ищем человека — ищем впечатление</footer>
-</main>
-<script>
-const nodes=[...document.querySelectorAll('.node')],info=document.getElementById('info'),title=document.getElementById('infoTitle'),text=document.getElementById('infoText'),step=document.getElementById('infoStep');
-function selectNode(node,i){nodes.forEach(n=>n.classList.remove('active'));node.classList.add('active');step.textContent='ШАГ '+String(i+1).padStart(2,'0');title.textContent=node.dataset.title;text.textContent=node.dataset.text;info.classList.add('show')}
-nodes.forEach((node,i)=>node.addEventListener('click',e=>{e.stopPropagation();selectNode(node,i)}));
-document.getElementById('start').addEventListener('click',()=>{selectNode(nodes[0],0);document.querySelector('.stage').scrollIntoView({behavior:'smooth',block:'center'})});
-</script>
-</body>
+<body></body>
 </html>
