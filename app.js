@@ -103,3 +103,85 @@ style.textContent = `
   @media(max-width:850px) { .molecule-stage.journey-open .molecule-placeholder { transform:scale(.62); } .journey-card { right:50%; transform:translate(50%,18px); bottom:0; width:min(430px,94%); } .journey-card.is-visible { transform:translate(50%,0); } }
 `;
 document.head.appendChild(style);
+
+// Dofamin 3D foundation: a real WebGL scene, without changing the journey UI yet.
+async function initThreeScene() {
+  if (!moleculeStage) return;
+  try {
+    const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js');
+
+    const oldPlaceholder = moleculeStage.querySelector('.molecule-placeholder');
+    if (oldPlaceholder) oldPlaceholder.style.display = 'none';
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'dofamin-three';
+    canvas.setAttribute('aria-label', '3D-сцена молекулы Dofamin');
+    moleculeStage.appendChild(canvas);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(moleculeStage.clientWidth, moleculeStage.clientHeight, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, moleculeStage.clientWidth / moleculeStage.clientHeight, 0.1, 100);
+    camera.position.set(0, 0, 7);
+
+    const ambient = new THREE.HemisphereLight(0x8deee7, 0x11152f, 2.1);
+    scene.add(ambient);
+    const key = new THREE.PointLight(0x58eee0, 32, 12);
+    key.position.set(2.5, 3, 4);
+    scene.add(key);
+    const fill = new THREE.PointLight(0x765cff, 24, 10);
+    fill.position.set(-3, -1, 3);
+    scene.add(fill);
+
+    // A single reference sphere is intentionally all we build in this task.
+    // The actual dopamine geometry comes in the next iteration.
+    const geometry = new THREE.SphereGeometry(0.78, 64, 64);
+    const material = new THREE.MeshPhysicalMaterial({
+      color: 0x4937b8,
+      roughness: 0.18,
+      metalness: 0.08,
+      transmission: 0.16,
+      thickness: 0.55,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.12,
+      emissive: 0x21115f,
+      emissiveIntensity: 0.55
+    });
+    const atom = new THREE.Mesh(geometry, material);
+    scene.add(atom);
+
+    const rim = new THREE.Mesh(
+      new THREE.SphereGeometry(0.84, 48, 48),
+      new THREE.MeshBasicMaterial({ color: 0x4ce9dc, transparent: true, opacity: 0.08, side: THREE.BackSide })
+    );
+    scene.add(rim);
+
+    const resize = () => {
+      const width = Math.max(1, moleculeStage.clientWidth);
+      const height = Math.max(1, moleculeStage.clientHeight);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    const clock = new THREE.Clock();
+    const animate = () => {
+      const t = clock.getElapsedTime();
+      atom.rotation.y = t * 0.22;
+      atom.rotation.x = Math.sin(t * 0.45) * 0.08;
+      rim.scale.setScalar(1 + Math.sin(t * 1.2) * 0.025);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    };
+    animate();
+  } catch (error) {
+    console.error('Dofamin 3D scene failed to initialize:', error);
+  }
+}
+
+initThreeScene();
