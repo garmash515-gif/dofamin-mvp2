@@ -2,11 +2,36 @@ const startButton = document.getElementById('start');
 const molecule = document.querySelector('.dopamine');
 const moleculeStage = document.querySelector('.molecule-stage');
 
+const journey = { step: 0, choice: null, companion: null };
+
+function renderStepTwo() {
+  const card = document.querySelector('.journey-card');
+  if (!card) return;
+  journey.step = 2;
+  card.innerHTML = `
+    <span class="journey-kicker">ШАГ 02 · КОМУ С ТОБОЙ?</span>
+    <h2>С кем хочется разделить это?</h2>
+    <p>Не обязательно искать пару. Здесь можно выбрать человека, с которым хочется прожить это впечатление.</p>
+    <div class="journey-options">
+      <button type="button" data-next="друг">С другом <span>↗</span></button>
+      <button type="button" data-next="партнер">С человеком, который нравится <span>↗</span></button>
+      <button type="button" data-next="один">Хочу сам <span>↗</span></button>
+    </div>`;
+  card.querySelectorAll('[data-next]').forEach((button) => {
+    button.addEventListener('click', () => {
+      card.querySelectorAll('[data-next]').forEach((item) => item.classList.remove('selected'));
+      button.classList.add('selected');
+      journey.companion = button.dataset.next;
+    });
+  });
+  card.classList.remove('is-visible');
+  requestAnimationFrame(() => card.classList.add('is-visible'));
+}
+
 function openJourney() {
   if (document.querySelector('.journey-card')) return;
-
+  journey.step = 1;
   moleculeStage.classList.add('journey-open');
-
   const card = document.createElement('div');
   card.className = 'journey-card';
   card.innerHTML = `
@@ -17,16 +42,15 @@ function openJourney() {
       <button type="button" data-choice="новое">Хочу нового <span>↗</span></button>
       <button type="button" data-choice="живое">Хочу живого общения <span>↗</span></button>
       <button type="button" data-choice="неожиданное">Хочу неожиданного <span>↗</span></button>
-    </div>
-  `;
-
+    </div>`;
   moleculeStage.appendChild(card);
   requestAnimationFrame(() => card.classList.add('is-visible'));
-
   card.querySelectorAll('[data-choice]').forEach((button) => {
     button.addEventListener('click', () => {
       card.querySelectorAll('[data-choice]').forEach((item) => item.classList.remove('selected'));
       button.classList.add('selected');
+      journey.choice = button.dataset.choice;
+      setTimeout(renderStepTwo, 260);
     });
   });
 }
