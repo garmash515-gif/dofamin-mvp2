@@ -1,10 +1,15 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 import { createCameraController } from '../camera/cameraController.js';
 import { createPostProcessing } from '../effects/postprocessing.js';
+import { createDiagnostic } from '../debug/diagnostic.js';
 
 export function createAppScene(canvas) {
+  const debug = createDiagnostic();
+  debug.log('THREE', true, 'loaded');
+
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  debug.log('Renderer', true);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
@@ -13,17 +18,19 @@ export function createAppScene(canvas) {
 
   scene.add(new THREE.HemisphereLight(0x9bd8ff, 0x10051f, 1.5));
 
-  // Composer pipeline diagnostic object.
-  // If this sphere is visible, EffectComposer is working.
   const debugSphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.18, 32, 32),
     new THREE.MeshStandardMaterial({ color: 0xff5533 })
   );
   debugSphere.position.set(0, 0, 0);
   scene.add(debugSphere);
+  debug.log('Scene object', true);
 
   const cameraController = createCameraController(camera, renderer);
+  debug.log('Camera', true);
+
   const composer = createPostProcessing(renderer, scene, camera);
+  debug.log('Composer', true);
 
   function resize() {
     const width = window.innerWidth;
