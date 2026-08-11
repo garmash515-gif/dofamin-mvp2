@@ -35,41 +35,46 @@ const routeText=['С чего хочется начать впечатление
 const colors={C:0x22d8d0,O:0xff6688,N:0x9d73ff,H:0xf2f6ff};
 function atom(type,pos,size=.22,routeIndex=null){
   const g=new THREE.Group();g.position.copy(pos);g.userData={type,routeIndex,baseScale:1,selected:false};molecule.add(g);
-  const material=new THREE.MeshPhysicalMaterial({color:colors[type],metalness:.08,roughness:.12,transmission:type==='H'?.05:.18,thickness:.55,ior:1.45,clearcoat:1,clearcoatRoughness:.06,emissive:colors[type],emissiveIntensity:type==='H'?.05:.18});
-  const core=new THREE.Mesh(new THREE.SphereGeometry(size,40,40),material);core.userData.atom=g;g.add(core);
-  const glow=new THREE.Mesh(new THREE.SphereGeometry(size*1.16,28,28),new THREE.MeshBasicMaterial({color:colors[type],transparent:true,opacity:type==='H'?.02:.075,blending:THREE.AdditiveBlending,depthWrite:false}));glow.userData.atom=g;g.add(glow);
+  // Invisible depth-only sphere: translucent atom still occludes bonds underneath it.
+  const occluder=new THREE.Mesh(new THREE.SphereGeometry(size*1.01,40,40),new THREE.MeshDepthMaterial());occluder.renderOrder=0;g.add(occluder);
+  const material=new THREE.MeshPhysicalMaterial({color:colors[type],metalness:.05,roughness:.1,transmission:type==='H'?.02:.12,thickness:.5,ior:1.42,clearcoat:1,clearcoatRoughness:.05,emissive:colors[type],emissiveIntensity:type==='H'?.03:.16,transparent:true,opacity:type==='H'?.68:.78,depthWrite:false});
+  const core=new THREE.Mesh(new THREE.SphereGeometry(size,40,40),material);core.renderOrder=2;core.userData.atom=g;g.add(core);
+  const glow=new THREE.Mesh(new THREE.SphereGeometry(size*1.16,28,28),new THREE.MeshBasicMaterial({color:colors[type],transparent:true,opacity:type==='H'?.015:.065,blending:THREE.AdditiveBlending,depthWrite:false,depthTest:true}));glow.renderOrder=3;glow.userData.atom=g;g.add(glow);
   if(routeIndex!==null){g.userData.route=true;g.userData.routeIndex=routeIndex}
   atoms.push(g);return g;
 }
 function bond(a,b,doubleBond=false){
-  const d=new THREE.Vector3().subVectors(b,a),len=d.length(),mid=new THREE.Vector3().addVectors(a,b).multiplyScalar(.5),g=new THREE.Group();g.position.copy(mid);g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());molecule.add(g);
-  const outer=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,len*.94,20,1,true),new THREE.MeshPhysicalMaterial({color:0x7aa9c8,metalness:.18,roughness:.22,transparent:true,opacity:.58,emissive:0x173c5c,emissiveIntensity:.3}));g.add(outer);
-  if(doubleBond){for(const s of[-1,1]){const x=new THREE.Mesh(new THREE.CylinderGeometry(.018,.018,len*.82,14),new THREE.MeshBasicMaterial({color:0x9df8f2,transparent:true,opacity:.72,blending:THREE.AdditiveBlending}));x.position.x=s*.075;g.add(x)}}
+  const d=new THREE.Vector3().subVectors(b,a),len=d.length(),mid=new THREE.Vector3().addVectors(a,b).multiplyScalar(.5),g=new THREE.Group();g.position.copy(mid);g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());molecule.add(g);g.renderOrder=-1;
+  const outer=new THREE.Mesh(new THREE.CylinderGeometry(.052,.052,len*.94,20,1,true),new THREE.MeshPhysicalMaterial({color:0x72a9c4,metalness:.16,roughness:.18,transparent:true,opacity:.30,emissive:0x173c5c,emissiveIntensity:.24,depthWrite:false}));outer.renderOrder=-1;g.add(outer);
+  if(doubleBond){for(const s of[-1,1]){const x=new THREE.Mesh(new THREE.CylinderGeometry(.016,.016,len*.82,14),new THREE.MeshBasicMaterial({color:0x9df8f2,transparent:true,opacity:.54,blending:THREE.AdditiveBlending,depthWrite:false}));x.position.x=s*.07;x.renderOrder=-1;g.add(x)}}
 }
 // Dopamine: catechol ring + two OH groups + 2-carbon aminoethyl side chain.
-const R=1.08, ring=[];
+const R=1.08,ring=[];
 for(let i=0;i<6;i++){const a=Math.PI/2+i*Math.PI/3;ring.push(new THREE.Vector3(Math.cos(a)*R,Math.sin(a)*R,0));}
 for(let i=0;i<6;i++)atom('C',ring[i],.20,i);
 for(let i=0;i<6;i++)bond(ring[i],ring[(i+1)%6],i%2===0);
-// Two adjacent hydroxyls.
 const o1=ring[1].clone().add(new THREE.Vector3(.36,.38,.04)),o2=ring[2].clone().add(new THREE.Vector3(-.36,.38,.04));
 atom('O',o1,.16);atom('O',o2,.16);bond(ring[1],o1);bond(ring[2],o2);const h1=o1.clone().add(new THREE.Vector3(.16,.23,.03)),h2=o2.clone().add(new THREE.Vector3(-.16,.23,.03));atom('H',h1,.09);atom('H',h2,.09);bond(o1,h1);bond(o2,h2);
-// 2-aminoethyl side chain from the para carbon.
 const c7=ring[4].clone().add(new THREE.Vector3(.55,-.15,.08)),c8=c7.clone().add(new THREE.Vector3(.72,-.34,.03)),n=c8.clone().add(new THREE.Vector3(.66,-.28,.02));
 atom('C',c7,.18);atom('C',c8,.17);atom('N',n,.17);bond(ring[4],c7);bond(c7,c8);bond(c8,n);
-// Small hydrogens on the side chain keep the structure organic without overwhelming the route.
 const hs=[c7.clone().add(new THREE.Vector3(.02,.34,.05)),c7.clone().add(new THREE.Vector3(.12,-.25,-.14)),c8.clone().add(new THREE.Vector3(.02,.26,.12)),c8.clone().add(new THREE.Vector3(.14,-.18,-.13)),n.clone().add(new THREE.Vector3(.18,.28,.08)),n.clone().add(new THREE.Vector3(.35,-.05,-.02))];
 for(let i=0;i<hs.length;i++){atom('H',hs[i],.065);bond(i<2?c7:i<4?c8:n,hs[i])}
-// Soft orbital rings are separate visual meshes, not one molecule object.
-for(const r of[1.48,1.78,2.08]){const orb=new THREE.Mesh(new THREE.TorusGeometry(r,.006,8,96),new THREE.MeshBasicMaterial({color:0x4bded8,transparent:true,opacity:.10,blending:THREE.AdditiveBlending}));orb.rotation.x=.04;scene.add(orb)}
+for(const r of[1.48,1.78,2.08]){const orb=new THREE.Mesh(new THREE.TorusGeometry(r,.006,8,96),new THREE.MeshBasicMaterial({color:0x4bded8,transparent:true,opacity:.08,blending:THREE.AdditiveBlending,depthWrite:false}));orb.rotation.x=.04;scene.add(orb)}
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let selected=null;
 function setPointer(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1}
 function selectAtom(g){if(selected&&selected!==g)selected.userData.selected=false;selected=g;g.userData.selected=true;document.querySelector('#nodeTitle').textContent=g.userData.routeIndex!==null?`0${g.userData.routeIndex+1} · ${routeNames[g.userData.routeIndex]}`:`Атом ${g.userData.type}`;document.querySelector('#nodeText').textContent=g.userData.routeIndex!==null?routeText[g.userData.routeIndex]:'Элемент молекулы дофамина';document.querySelector('#nodeInfo').classList.add('show')}
-canvas.addEventListener('pointerdown',e=>{setPointer(e);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(atoms.flatMap(g=>g.children),false);if(hits.length){const g=hits[0].object.userData.atom;selectAtom(g)}});
+canvas.addEventListener('pointerdown',e=>{setPointer(e);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(atoms.flatMap(g=>g.children.filter(c=>c.userData.atom)),false);if(hits.length){const g=hits[0].object.userData.atom;selectAtom(g)}});
 document.querySelector('#start').addEventListener('click',()=>selectAtom(atoms.find(a=>a.userData.routeIndex===0)));
-function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();const mobile=w<600;camera.position.set(mobile?0.15:0,0,mobile?7.4:6.4);molecule.scale.setScalar(mobile?.64:1);molecule.position.set(mobile?.02:0,mobile?.02:0,0)}addEventListener('resize',resize);resize();
+// Fit the camera from the actual 3D molecule bounds. The molecule itself is never scaled for mobile.
+function fitCameraToMolecule(){
+  const box=new THREE.Box3().setFromObject(molecule);const sphere=box.getBoundingSphere(new THREE.Sphere());
+  const verticalFov=THREE.MathUtils.degToRad(camera.fov),horizontalFov=2*Math.atan(Math.tan(verticalFov/2)*camera.aspect),limitingFov=Math.min(verticalFov,horizontalFov);
+  const padding=innerWidth<600?.82:.72;camera.position.z=sphere.radius/Math.tan(limitingFov/2)/padding;
+  const mobile=innerWidth<600;const targetY=mobile?-.05:.08;camera.lookAt(new THREE.Vector3(0,targetY,0));molecule.position.y=mobile?-.12:.02;
+}
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();fitCameraToMolecule()}addEventListener('resize',resize);resize();
 function animate(t){const time=t*.001;key.position.set(2.4+Math.sin(time)*.8,2.5+Math.cos(time*.8)*.5,4);rim.position.set(-2.2,-1.6,3);molecule.rotation.y=Math.sin(time*.20)*.16;molecule.rotation.x=Math.sin(time*.15)*.045;
- atoms.forEach((g,i)=>{const target=g.userData.selected?1.45:1;g.userData.baseScale+=(target-g.userData.baseScale)*.12;g.scale.setScalar(g.userData.baseScale);const core=g.children[0];if(core.material&&core.material.emissiveIntensity!==undefined){core.material.emissiveIntensity+=(g.userData.selected?.8:.18-core.material.emissiveIntensity)*.12}const glow=g.children[1];if(glow)glow.material.opacity+=(g.userData.selected?.25:(g.userData.type==='H'?.02:.075)-glow.material.opacity)*.12});
+ atoms.forEach((g,i)=>{const target=g.userData.selected?1.45:1;g.userData.baseScale+=(target-g.userData.baseScale)*.12;g.scale.setScalar(g.userData.baseScale);const core=g.children.find(c=>c.userData.atom===g);if(core?.material?.emissiveIntensity!==undefined)core.material.emissiveIntensity+=(g.userData.selected?.8:(g.userData.type==='H'?.03:.16)-core.material.emissiveIntensity)*.12;const glow=g.children.find(c=>c.userData.atom===g&&c.material?.blending===THREE.AdditiveBlending);if(glow)glow.material.opacity+=(g.userData.selected?.22:(g.userData.type==='H'?.015:.065)-glow.material.opacity)*.12});
  renderer.render(scene,camera);requestAnimationFrame(animate)}requestAnimationFrame(animate);
 </script>
 </body></html>
