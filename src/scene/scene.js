@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
+import { createCameraController } from '../camera/cameraController.js';
 
 export function createAppScene(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -10,6 +11,8 @@ export function createAppScene(canvas) {
   camera.lookAt(0, 0, 0);
 
   scene.add(new THREE.HemisphereLight(0x9bd8ff, 0x10051f, 1.5));
+
+  const cameraController = createCameraController(camera, renderer);
 
   function resize() {
     const width = window.innerWidth;
@@ -26,8 +29,12 @@ export function createAppScene(canvas) {
     scene,
     camera,
     renderer,
+    cameraController,
     start() {
+      const clock = new THREE.Clock();
       function loop() {
+        const delta = clock.getDelta();
+        cameraController.update(delta);
         renderer.render(scene, camera);
         requestAnimationFrame(loop);
       }
