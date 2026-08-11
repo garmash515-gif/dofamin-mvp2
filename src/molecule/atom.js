@@ -1,13 +1,13 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 
 const MATERIALS = {
-  C: { color: 0x15232d, emissive: 0x06262a, intensity: 0.08, roughness: 0.18 },
-  O: { color: 0x9b2737, emissive: 0xff334f, intensity: 2.4, roughness: 0.12 },
-  N: { color: 0x245fbd, emissive: 0x164fbb, intensity: 0.35, roughness: 0.14 },
-  H: { color: 0xb9d8e8, emissive: 0x12323d, intensity: 0.12, roughness: 0.2 }
+  C: { color: 0x26333d, emissive: 0x06262a, intensity: 0.03, roughness: 0.24, size: 0.28 },
+  O: { color: 0xb52b3d, emissive: 0xff334f, intensity: 0.65, roughness: 0.16, size: 0.32 },
+  N: { color: 0x286dcc, emissive: 0x164fbb, intensity: 0.18, roughness: 0.18, size: 0.30 },
+  H: { color: 0xd5edf5, emissive: 0x12323d, intensity: 0.04, roughness: 0.22, size: 0.15 }
 };
 
-export function createAtom(type, position, size = 0.2) {
+export function createAtom(type, position, size = null) {
   const group = new THREE.Group();
   group.position.set(position.x, position.y, position.z);
   group.userData.type = type;
@@ -18,7 +18,7 @@ export function createAtom(type, position, size = 0.2) {
   const material = new THREE.MeshPhysicalMaterial({
     color: style.color,
     transparent: true,
-    transmission: type === 'H' ? 0.2 : 0.45,
+    transmission: type === 'H' ? 0.2 : 0.25,
     thickness: 0.8,
     ior: 1.45,
     roughness: style.roughness,
@@ -28,7 +28,7 @@ export function createAtom(type, position, size = 0.2) {
     emissiveIntensity: style.intensity
   });
 
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(size, 32, 32), material);
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(size ?? style.size, 32, 32), material);
   mesh.name = `atom-${type}`;
   group.add(mesh);
   group.userData.material = material;
