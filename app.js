@@ -2,7 +2,31 @@ const startButton = document.getElementById('start');
 const molecule = document.querySelector('.dopamine');
 const moleculeStage = document.querySelector('.molecule-stage');
 
-const journey = { step: 0, choice: null, companion: null };
+const journey = { step: 0, choice: null, companion: null, surprise: null };
+
+function renderStepThree() {
+  const card = document.querySelector('.journey-card');
+  if (!card) return;
+  journey.step = 3;
+  card.innerHTML = `
+    <span class="journey-kicker">ШАГ 03 · СТЕПЕНЬ СЛУЧАЙНОСТИ</span>
+    <h2>Насколько можно отпустить контроль?</h2>
+    <p>От почти привычного варианта до полного «хрен знает, куда мы идём». Ты выбираешь уровень неожиданности.</p>
+    <div class="journey-options">
+      <button type="button" data-surprise="мягко">Пусть удивит, но без экстрима <span>↗</span></button>
+      <button type="button" data-surprise="смело">Давай что-нибудь неожиданное <span>↗</span></button>
+      <button type="button" data-surprise="рандом">Полный рандом. Решай за меня <span>↗</span></button>
+    </div>`;
+  card.querySelectorAll('[data-surprise]').forEach((button) => {
+    button.addEventListener('click', () => {
+      card.querySelectorAll('[data-surprise]').forEach((item) => item.classList.remove('selected'));
+      button.classList.add('selected');
+      journey.surprise = button.dataset.surprise;
+    });
+  });
+  card.classList.remove('is-visible');
+  requestAnimationFrame(() => card.classList.add('is-visible'));
+}
 
 function renderStepTwo() {
   const card = document.querySelector('.journey-card');
@@ -22,6 +46,7 @@ function renderStepTwo() {
       card.querySelectorAll('[data-next]').forEach((item) => item.classList.remove('selected'));
       button.classList.add('selected');
       journey.companion = button.dataset.next;
+      setTimeout(renderStepThree, 260);
     });
   });
   card.classList.remove('is-visible');
