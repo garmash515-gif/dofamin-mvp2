@@ -3,6 +3,7 @@ import { bond } from './bonds.js';
 import { createAtom } from './atom.js';
 import { createMoleculeView } from './moleculeView.js';
 import { createEnergyPulse } from '../effects/energyFlow.js';
+import { apply3DConformation } from './conformation.js';
 
 export function createDopamineGraph() {
   const r = 0.72;
@@ -19,6 +20,8 @@ export function createDopamineGraph() {
     atom('N1', 'N', { x: 1.78, y: -2.50, z: 0 }), atom('H_N1', 'H', { x: 2.05, y: -2.76, z: 0 }),
     atom('H_C3', 'H', { x: -0.98, y: -0.42, z: 0 }), atom('H_C5', 'H', { x: 0.98, y: 0.42, z: 0 }), atom('H_C6', 'H', { x: 1.24, y: 1.00, z: 0 })
   ];
+
+  apply3DConformation(atoms);
 
   const bonds = [];
   const ringTypes = ['double', 'single', 'double', 'single', 'double', 'single'];
