@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 import { createCameraController } from '../camera/cameraController.js';
+import { createPostProcessing } from '../effects/postprocessing.js';
 
 export function createAppScene(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -13,11 +14,13 @@ export function createAppScene(canvas) {
   scene.add(new THREE.HemisphereLight(0x9bd8ff, 0x10051f, 1.5));
 
   const cameraController = createCameraController(camera, renderer);
+  const composer = createPostProcessing(renderer, scene, camera);
 
   function resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
     renderer.setSize(width, height, false);
+    composer.setSize(width, height);
     camera.aspect = width / height;
     camera.updateProjectionMatrix();
   }
@@ -29,13 +32,14 @@ export function createAppScene(canvas) {
     scene,
     camera,
     renderer,
+    composer,
     cameraController,
     start() {
       const clock = new THREE.Clock();
       function loop() {
         const delta = clock.getDelta();
         cameraController.update(delta);
-        renderer.render(scene, camera);
+        composer.render();
         requestAnimationFrame(loop);
       }
       loop();
