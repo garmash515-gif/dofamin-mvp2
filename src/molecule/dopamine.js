@@ -1,12 +1,13 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 import { createAtom } from './atom.js';
 import { createBond } from './bond.js';
 import { createEnergyPulse } from '../effects/energyFlow.js';
 
 export function createDopamineMolecule(scene) {
+  const molecule = new THREE.Group();
   const atoms = [];
   const bonds = [];
 
-  // Compact composition for portrait/mobile screens.
   const radius = 0.72;
   const atomSize = 0.105;
 
@@ -23,18 +24,16 @@ export function createDopamineMolecule(scene) {
       atomSize
     );
 
-    scene.add(atom);
+    molecule.add(atom);
     atoms.push(atom);
   }
 
-  // Visual bonds + energy route between adjacent atoms.
   for (let i = 0; i < atoms.length; i++) {
     const start = atoms[i];
     const end = atoms[(i + 1) % atoms.length];
-
     const bond = createBond(start, end);
-    scene.add(bond);
 
+    molecule.add(bond);
     bonds.push({
       start,
       end,
@@ -45,5 +44,7 @@ export function createDopamineMolecule(scene) {
     });
   }
 
-  return { atoms, bonds };
+  scene.add(molecule);
+
+  return { molecule, atoms, bonds };
 }
