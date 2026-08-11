@@ -1,0 +1,10 @@
+{
+  "name": "dofamin-mvp2",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dofamin MVP2 — interactive 3D journey to an impression",
+  "type": "module",
+  "dependencies": {
+    "three": "0.185.1"
+  }
+}
