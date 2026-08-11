@@ -5,6 +5,7 @@ export function createAtom(type, position, size = .2) {
   group.position.copy(position);
   group.userData.type = type;
   group.userData.energy = 0.08;
+  group.userData.active = false;
 
   const material = new THREE.MeshPhysicalMaterial({
     transparent:true,
@@ -25,7 +26,6 @@ export function createAtom(type, position, size = .2) {
 
   group.add(mesh);
 
-  // Внутреннее ядро энергии. Не контур снаружи, а свет внутри атома.
   const coreMaterial = new THREE.MeshBasicMaterial({
     color:0x67eee3,
     transparent:true,
@@ -41,7 +41,31 @@ export function createAtom(type, position, size = .2) {
 
   energyCore.name = 'energyCore';
   group.add(energyCore);
+
   group.userData.energyCore = energyCore;
+  group.userData.coreBaseScale = .55;
 
   return group;
+}
+
+// Пробуждение атома без внешнего glow.
+// Свет появляется изнутри через изменение ядра энергии.
+export function updateAtomEnergy(atom, time, active = false) {
+  if (!atom?.userData?.energyCore) return;
+
+  const core = atom.userData.energyCore;
+  const pulse = (Math.sin(time * 3) + 1) / 2;
+
+  const targetOpacity = active ? .16 + pulse * .14 : .06;
+  core.material.opacity += (targetOpacity - core.material.opacity) * .08;
+
+  const targetScale = active
+    ? .72 + pulse * .12
+    : .55;
+
+  core.scale.setScalar(
+    core.scale.x + (targetScale - core.scale.x) * .08
+  );
+
+  atom.userData.active = active;
 }
