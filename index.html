@@ -24,78 +24,67 @@
 
       <div class="molecule-stage">
         <div class="molecule-placeholder" aria-label="Молекула дофамина">
-          <svg class="dopamine" viewBox="0 0 620 620" role="img" aria-label="Стилизованная объёмная молекула дофамина">
+          <svg class="dopamine" viewBox="0 0 620 620" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Объёмная стилизованная молекула дофамина">
             <defs>
               <radialGradient id="carbon" cx="28%" cy="20%">
-                <stop offset="0" stop-color="#ffffff"/>
-                <stop offset=".12" stop-color="#b9fff9"/>
-                <stop offset=".34" stop-color="#48eadc"/>
-                <stop offset=".72" stop-color="#5364ff"/>
-                <stop offset="1" stop-color="#25105e"/>
+                <stop offset="0" stop-color="#ffffff"/><stop offset=".12" stop-color="#d8fffb"/>
+                <stop offset=".34" stop-color="#48eadc"/><stop offset=".72" stop-color="#5364ff"/><stop offset="1" stop-color="#21104f"/>
               </radialGradient>
               <radialGradient id="oxygen" cx="28%" cy="20%">
-                <stop offset="0" stop-color="#ffffff"/>
-                <stop offset=".2" stop-color="#ffb5d8"/>
-                <stop offset=".55" stop-color="#ff668e"/>
-                <stop offset="1" stop-color="#7b205f"/>
+                <stop offset="0" stop-color="#ffffff"/><stop offset=".2" stop-color="#ffc5df"/><stop offset=".55" stop-color="#ff668e"/><stop offset="1" stop-color="#6c1e59"/>
               </radialGradient>
               <radialGradient id="nitrogen" cx="28%" cy="20%">
-                <stop offset="0" stop-color="#ffffff"/>
-                <stop offset=".2" stop-color="#c5fff8"/>
-                <stop offset=".55" stop-color="#4ae6dc"/>
-                <stop offset="1" stop-color="#3150ba"/>
+                <stop offset="0" stop-color="#ffffff"/><stop offset=".2" stop-color="#d9fffb"/><stop offset=".55" stop-color="#4ae6dc"/><stop offset="1" stop-color="#2949aa"/>
               </radialGradient>
               <linearGradient id="bond" x1="0" y1="0" x2="1" y2="1">
-                <stop stop-color="#bffffa"/>
-                <stop offset=".35" stop-color="#48eadc"/>
-                <stop offset=".72" stop-color="#695dff"/>
-                <stop offset="1" stop-color="#b88aff"/>
+                <stop stop-color="#d5fffb"/><stop offset=".35" stop-color="#48eadc"/><stop offset=".72" stop-color="#695dff"/><stop offset="1" stop-color="#b88aff"/>
               </linearGradient>
-              <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
+              <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#00052a" flood-opacity=".55"/></filter>
             </defs>
 
-            <ellipse cx="310" cy="330" rx="205" ry="205" fill="#42e8dc" opacity=".07" filter="url(#soft)"/>
-            <circle cx="310" cy="330" r="174" fill="none" stroke="#48eadc" stroke-opacity=".14" stroke-width="1"/>
-            <circle cx="310" cy="330" r="202" fill="none" stroke="#6b55ff" stroke-opacity=".12" stroke-width="1"/>
+            <ellipse cx="300" cy="320" rx="210" ry="210" fill="#42e8dc" opacity=".075" filter="url(#soft)"/>
+            <circle cx="300" cy="320" r="174" fill="none" stroke="#48eadc" stroke-opacity=".14" stroke-width="1"/>
+            <circle cx="300" cy="320" r="202" fill="none" stroke="#6b55ff" stroke-opacity=".12" stroke-width="1"/>
 
-            <!-- бензольное кольцо -->
-            <g stroke="url(#bond)" stroke-linecap="round" stroke-linejoin="round" fill="none">
-              <path d="M310 205 L418 267 L418 391 L310 453 L202 391 L202 267 Z" stroke-width="15"/>
-              <path d="M310 226 L397 276 M397 382 L310 432 M223 382 L223 276" stroke-width="8" opacity=".95"/>
+            <!-- Центральное бензольное кольцо -->
+            <g stroke="url(#bond)" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#shadow)">
+              <path d="M300 195 L408 257 L408 383 L300 445 L192 383 L192 257 Z" stroke-width="15"/>
+              <path d="M300 216 L387 266 M387 374 L300 424 M213 374 L213 266" stroke-width="8" opacity=".95"/>
             </g>
 
-            <!-- боковая цепочка: -CH2-CH2-NH2 -->
-            <g stroke="url(#bond)" stroke-width="14" stroke-linecap="round" fill="none">
-              <path d="M418 267 L493 224 L548 256"/>
-              <path d="M548 256 L585 222"/>
+            <!-- Боковая цепочка -CH2-CH2-NH2 -->
+            <g stroke="url(#bond)" stroke-width="14" stroke-linecap="round" fill="none" filter="url(#shadow)">
+              <path d="M408 257 L477 217 L527 246"/>
+              <path d="M527 246 L555 218"/>
             </g>
 
-            <!-- OH группы катехола -->
-            <g stroke="url(#bond)" stroke-width="13" stroke-linecap="round" fill="none">
-              <path d="M202 267 L145 221"/>
-              <path d="M202 391 L145 438"/>
+            <!-- Две OH-группы -->
+            <g stroke="url(#bond)" stroke-width="13" stroke-linecap="round" fill="none" filter="url(#shadow)">
+              <path d="M192 257 L139 216"/>
+              <path d="M192 383 L139 424"/>
             </g>
 
-            <!-- атомы кольца -->
-            <g fill="url(#carbon)" stroke="#bffffa" stroke-opacity=".28" stroke-width="2" filter="url(#glow)">
-              <circle cx="310" cy="205" r="34"/><circle cx="418" cy="267" r="34"/><circle cx="418" cy="391" r="34"/>
-              <circle cx="310" cy="453" r="34"/><circle cx="202" cy="391" r="34"/><circle cx="202" cy="267" r="34"/>
+            <!-- Шесть углеродных атомов кольца -->
+            <g fill="url(#carbon)" stroke="#d2fffa" stroke-opacity=".30" stroke-width="2" filter="url(#glow)">
+              <circle cx="300" cy="195" r="34"/><circle cx="408" cy="257" r="34"/><circle cx="408" cy="383" r="34"/>
+              <circle cx="300" cy="445" r="34"/><circle cx="192" cy="383" r="34"/><circle cx="192" cy="257" r="34"/>
             </g>
 
-            <!-- кислород -->
-            <g fill="url(#oxygen)" stroke="#ffd4e6" stroke-opacity=".45" stroke-width="2" filter="url(#glow)">
-              <circle cx="120" cy="201" r="31"/><circle cx="120" cy="459" r="31"/>
+            <!-- Кислород -->
+            <g fill="url(#oxygen)" stroke="#ffd8e8" stroke-opacity=".48" stroke-width="2" filter="url(#glow)">
+              <circle cx="113" cy="196" r="31"/><circle cx="113" cy="444" r="31"/>
             </g>
-            <g fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle"><text x="120" y="206">OH</text><text x="120" y="464">OH</text></g>
+            <g fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle"><text x="113" y="201">OH</text><text x="113" y="449">OH</text></g>
 
-            <!-- атомы цепочки -->
-            <g fill="url(#carbon)" stroke="#bffffa" stroke-opacity=".28" stroke-width="2" filter="url(#glow)"><circle cx="493" cy="224" r="32"/><circle cx="548" cy="256" r="32"/></g>
-            <g fill="url(#nitrogen)" stroke="#cffffb" stroke-opacity=".5" stroke-width="2" filter="url(#glow)"><circle cx="585" cy="222" r="36"/></g>
-            <text x="585" y="227" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle">NH₂</text>
+            <!-- Два углерода цепочки + азот -->
+            <g fill="url(#carbon)" stroke="#d2fffa" stroke-opacity=".30" stroke-width="2" filter="url(#glow)"><circle cx="477" cy="217" r="32"/><circle cx="527" cy="246" r="32"/></g>
+            <g fill="url(#nitrogen)" stroke="#d8fffb" stroke-opacity=".55" stroke-width="2" filter="url(#glow)"><circle cx="555" cy="218" r="34"/></g>
+            <text x="555" y="223" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle">NH₂</text>
 
-            <!-- маленькие блики -->
-            <g fill="#fff" opacity=".82"><circle cx="298" cy="192" r="5"/><circle cx="406" cy="254" r="5"/><circle cx="132" cy="190" r="4"/><circle cx="482" cy="213" r="4"/></g>
+            <!-- Блики создают ощущение объёма -->
+            <g fill="#fff" opacity=".88"><circle cx="289" cy="183" r="5"/><circle cx="397" cy="245" r="5"/><circle cx="125" cy="185" r="4"/><circle cx="467" cy="206" r="4"/><circle cx="545" cy="207" r="4"/></g>
           </svg>
         </div>
       </div>
