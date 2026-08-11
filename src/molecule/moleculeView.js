@@ -26,22 +26,22 @@ function cylinderBetween(a, b, radius, material, offset = 0) {
 
 function createBondView(start, end, type = 'single') {
   const material = new THREE.MeshPhysicalMaterial({
-    color: 0x3d8f9b,
+    color: 0x56808c,
     transparent: true,
-    opacity: 0.75,
-    roughness: 0.35,
-    metalness: 0.1,
-    emissive: 0x062025,
-    emissiveIntensity: 0.15
+    opacity: 0.9,
+    roughness: 0.45,
+    metalness: 0.15,
+    emissive: 0x061820,
+    emissiveIntensity: 0.08
   });
 
   const group = new THREE.Group();
-  const radius = type === 'double' ? 0.012 : 0.016;
+  const radius = type === 'double' ? 0.022 : 0.028;
 
   group.add(cylinderBetween(start.position, end.position, radius, material));
 
   if (type === 'double') {
-    group.add(cylinderBetween(start.position, end.position, radius, material, 0.025));
+    group.add(cylinderBetween(start.position, end.position, radius, material, 0.04));
   }
 
   group.userData.from = start;
