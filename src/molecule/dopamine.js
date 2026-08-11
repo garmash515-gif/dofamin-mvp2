@@ -6,11 +6,12 @@ export function createDopamineMolecule(scene) {
   const atoms = [];
   const bonds = [];
 
-  const radius = 1.15;
+  // Compact composition for portrait/mobile screens.
+  const radius = 0.72;
+  const atomSize = 0.105;
 
-  // Бензольное кольцо: шесть атомов вокруг центра
   for (let i = 0; i < 6; i++) {
-    const angle = i * Math.PI / 3;
+    const angle = Math.PI / 2 + i * Math.PI / 3;
 
     const atom = createAtom(
       'C',
@@ -19,14 +20,14 @@ export function createDopamineMolecule(scene) {
         y: Math.sin(angle) * radius,
         z: 0
       },
-      0.24
+      atomSize
     );
 
     scene.add(atom);
     atoms.push(atom);
   }
 
-  // Реальные визуальные связи
+  // Visual bonds + energy route between adjacent atoms.
   for (let i = 0; i < atoms.length; i++) {
     const start = atoms[i];
     const end = atoms[(i + 1) % atoms.length];
