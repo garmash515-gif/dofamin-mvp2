@@ -13,6 +13,15 @@ export function createAppScene(canvas) {
 
   scene.add(new THREE.HemisphereLight(0x9bd8ff, 0x10051f, 1.5));
 
+  // Composer pipeline diagnostic object.
+  // If this sphere is visible, EffectComposer is working.
+  const debugSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.18, 32, 32),
+    new THREE.MeshStandardMaterial({ color: 0xff5533 })
+  );
+  debugSphere.position.set(0, 0, 0);
+  scene.add(debugSphere);
+
   const cameraController = createCameraController(camera, renderer);
   const composer = createPostProcessing(renderer, scene, camera);
 
