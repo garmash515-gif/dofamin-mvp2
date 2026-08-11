@@ -1,97 +1,62 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#070d26">
-  <title>Dofamin — путь к впечатлению</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#070d26">
+<title>Dofamin — путь к впечатлению</title>
+<style>
+*{box-sizing:border-box} :root{--bg:#060b22;--text:#f7f8ff;--muted:#8996bc;--cyan:#4ce9dc;--violet:#7562ff;--pink:#ff6da8}
+html,body{margin:0;min-height:100%;background:var(--bg)}body{min-height:100vh;color:var(--text);font-family:Inter,Manrope,system-ui,-apple-system,sans-serif;overflow-x:hidden;background:radial-gradient(circle at 72% 42%,rgba(100,77,255,.25),transparent 34%),radial-gradient(circle at 25% 78%,rgba(47,231,215,.10),transparent 30%),var(--bg)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 0 45%,rgba(255,255,255,.018) 50%,transparent 55%)}
+.app{min-height:100vh;max-width:1320px;margin:auto;padding:28px 5vw 22px;display:flex;flex-direction:column}.topbar{display:flex;justify-content:space-between;align-items:center}.brand{font-size:21px;font-weight:850;letter-spacing:-.055em}.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:10px;background:radial-gradient(circle at 30% 25%,#fff,var(--cyan) 42%,var(--violet));box-shadow:0 0 22px var(--cyan)}.tag{font-size:10px;letter-spacing:.2em;color:#64719a}
+.hero{flex:1;display:grid;grid-template-columns:.68fr 1.32fr;align-items:center;gap:2vw}.copy{position:relative;z-index:5}.eyebrow{color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:.22em;text-transform:uppercase}.copy h1{margin:17px 0 24px;font-size:clamp(62px,7.5vw,108px);line-height:.86;letter-spacing:-.085em}.copy h1 span{display:block;background:linear-gradient(100deg,#fff 8%,var(--cyan) 55%,#a98dff);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{max-width:455px;margin:0 0 28px;color:var(--muted);font-size:16px;line-height:1.62}.start{border:1px solid rgba(255,255,255,.12);border-radius:17px;padding:15px 20px;color:#fff;background:linear-gradient(110deg,rgba(105,81,255,.9),rgba(43,211,201,.9));box-shadow:0 12px 35px rgba(66,81,255,.18);font:800 14px inherit;cursor:pointer}.start b{margin-left:22px;font-size:19px}
+.stage{position:relative;min-height:680px;display:grid;place-items:center}.molecule{position:relative;width:min(720px,92vw);aspect-ratio:1}.molecule svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 22px 35px rgba(0,0,0,.28))}.halo{position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,rgba(73,234,220,.12),rgba(108,83,255,.06) 38%,transparent 68%);filter:blur(12px)}
+.path{position:absolute;inset:11%;pointer-events:none}.pathline{position:absolute;left:50%;top:50%;width:55%;height:55%;transform:translate(-50%,-50%) rotate(30deg);border:2px dashed rgba(101,238,225,.22);border-radius:50%;box-shadow:0 0 35px rgba(74,234,220,.05)}.node{position:absolute;width:76px;height:76px;border-radius:50%;display:grid;place-items:center;text-align:center;border:1px solid rgba(255,255,255,.17);background:linear-gradient(145deg,rgba(83,240,224,.22),rgba(92,71,255,.18));backdrop-filter:blur(13px);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 14px 35px rgba(0,0,0,.25);color:#dce5ff;font-size:10px;font-weight:800;letter-spacing:.04em;cursor:pointer;transition:.25s ease}.node:hover,.node.active{transform:scale(1.12);border-color:rgba(76,233,220,.75);box-shadow:0 0 32px rgba(76,233,220,.2),inset 0 1px 0 rgba(255,255,255,.32)}.n1{left:50%;top:1%;transform:translateX(-50%)}.n2{right:4%;top:27%}.n3{right:4%;bottom:18%}.n4{left:50%;bottom:1%;transform:translateX(-50%)}.n5{left:4%;bottom:18%}.n6{left:4%;top:27%}
+.molecule-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:128px;height:128px;border-radius:50%;display:grid;place-items:center;text-align:center;border:1px solid rgba(255,255,255,.16);background:rgba(5,10,31,.55);backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 55px rgba(76,233,220,.09);font-size:10px;line-height:1.4;letter-spacing:.13em;text-transform:uppercase;color:#cdd7f6;z-index:4}.molecule-label strong{display:block;color:#fff;font-size:14px;letter-spacing:.02em;text-transform:none}.hint{position:absolute;right:2%;bottom:7%;padding:9px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.09);color:#64719a;background:rgba(255,255,255,.025);font-size:9px;letter-spacing:.13em;text-transform:uppercase}
+.info{position:absolute;left:50%;bottom:7%;transform:translateX(-50%) translateY(15px);width:min(390px,80%);padding:17px 20px;border:1px solid rgba(255,255,255,.12);border-radius:20px;background:rgba(8,14,40,.72);backdrop-filter:blur(20px);opacity:0;pointer-events:none;transition:.3s ease;z-index:10}.info.show{opacity:1;transform:translateX(-50%) translateY(0)}.info small{color:var(--cyan);font-size:9px;letter-spacing:.15em}.info h2{margin:7px 0 5px;font-size:20px;letter-spacing:-.04em}.info p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+footer{border-top:1px solid rgba(255,255,255,.07);padding-top:14px;color:#596684;font-size:10px;letter-spacing:.02em}
+@media(max-width:900px){.app{padding:22px 18px 18px}.hero{grid-template-columns:1fr;gap:0}.copy{padding-top:7vh}.stage{min-height:560px}.molecule{width:min(650px,100vw)}.copy h1{font-size:65px}.lead{font-size:15px}.node{width:64px;height:64px;font-size:9px}.molecule-label{width:108px;height:108px}.molecule-label strong{font-size:12px}}
+@media(max-width:520px){.tag{display:none}.copy{padding-top:5vh}.stage{min-height:420px}.molecule{width:110vw;margin-left:-5vw}.node{width:52px;height:52px;font-size:7px}.molecule-label{width:86px;height:86px;font-size:7px}.molecule-label strong{font-size:10px}.hint{display:none}}
+</style>
 </head>
 <body>
-  <main class="app">
-    <header class="topbar">
-      <div class="brand"><span class="brand-dot"></span>dofamin</div>
-      <span class="tag">ПУТЬ К ВПЕЧАТЛЕНИЮ</span>
-    </header>
-
-    <section class="hero">
-      <div class="copy">
-        <p class="eyebrow">не дейтинг. впечатление.</p>
-        <h1>Куда<br><span>сходить?</span></h1>
-        <p class="lead">Не выбирай из сотни вариантов. Пройди путь — и найди впечатление, которым захочется поделиться.</p>
-        <button id="start">Начать путь <b>→</b></button>
-      </div>
-
-      <div class="molecule-stage">
-        <div class="molecule-placeholder" aria-label="Молекула дофамина">
-          <svg class="dopamine" viewBox="0 0 620 620" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Объёмная стилизованная молекула дофамина">
-            <defs>
-              <radialGradient id="carbon" cx="28%" cy="20%">
-                <stop offset="0" stop-color="#ffffff"/><stop offset=".12" stop-color="#d8fffb"/>
-                <stop offset=".34" stop-color="#48eadc"/><stop offset=".72" stop-color="#5364ff"/><stop offset="1" stop-color="#21104f"/>
-              </radialGradient>
-              <radialGradient id="oxygen" cx="28%" cy="20%">
-                <stop offset="0" stop-color="#ffffff"/><stop offset=".2" stop-color="#ffc5df"/><stop offset=".55" stop-color="#ff668e"/><stop offset="1" stop-color="#6c1e59"/>
-              </radialGradient>
-              <radialGradient id="nitrogen" cx="28%" cy="20%">
-                <stop offset="0" stop-color="#ffffff"/><stop offset=".2" stop-color="#d9fffb"/><stop offset=".55" stop-color="#4ae6dc"/><stop offset="1" stop-color="#2949aa"/>
-              </radialGradient>
-              <linearGradient id="bond" x1="0" y1="0" x2="1" y2="1">
-                <stop stop-color="#d5fffb"/><stop offset=".35" stop-color="#48eadc"/><stop offset=".72" stop-color="#695dff"/><stop offset="1" stop-color="#b88aff"/>
-              </linearGradient>
-              <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-              <filter id="soft"><feGaussianBlur stdDeviation="18"/></filter>
-              <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#00052a" flood-opacity=".55"/></filter>
-            </defs>
-
-            <ellipse cx="300" cy="320" rx="210" ry="210" fill="#42e8dc" opacity=".075" filter="url(#soft)"/>
-            <circle cx="300" cy="320" r="174" fill="none" stroke="#48eadc" stroke-opacity=".14" stroke-width="1"/>
-            <circle cx="300" cy="320" r="202" fill="none" stroke="#6b55ff" stroke-opacity=".12" stroke-width="1"/>
-
-            <!-- Центральное бензольное кольцо -->
-            <g stroke="url(#bond)" stroke-linecap="round" stroke-linejoin="round" fill="none" filter="url(#shadow)">
-              <path d="M300 195 L408 257 L408 383 L300 445 L192 383 L192 257 Z" stroke-width="15"/>
-              <path d="M300 216 L387 266 M387 374 L300 424 M213 374 L213 266" stroke-width="8" opacity=".95"/>
-            </g>
-
-            <!-- Боковая цепочка -CH2-CH2-NH2 -->
-            <g stroke="url(#bond)" stroke-width="14" stroke-linecap="round" fill="none" filter="url(#shadow)">
-              <path d="M408 257 L477 217 L527 246"/>
-              <path d="M527 246 L555 218"/>
-            </g>
-
-            <!-- Две OH-группы -->
-            <g stroke="url(#bond)" stroke-width="13" stroke-linecap="round" fill="none" filter="url(#shadow)">
-              <path d="M192 257 L139 216"/>
-              <path d="M192 383 L139 424"/>
-            </g>
-
-            <!-- Шесть углеродных атомов кольца -->
-            <g fill="url(#carbon)" stroke="#d2fffa" stroke-opacity=".30" stroke-width="2" filter="url(#glow)">
-              <circle cx="300" cy="195" r="34"/><circle cx="408" cy="257" r="34"/><circle cx="408" cy="383" r="34"/>
-              <circle cx="300" cy="445" r="34"/><circle cx="192" cy="383" r="34"/><circle cx="192" cy="257" r="34"/>
-            </g>
-
-            <!-- Кислород -->
-            <g fill="url(#oxygen)" stroke="#ffd8e8" stroke-opacity=".48" stroke-width="2" filter="url(#glow)">
-              <circle cx="113" cy="196" r="31"/><circle cx="113" cy="444" r="31"/>
-            </g>
-            <g fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle"><text x="113" y="201">OH</text><text x="113" y="449">OH</text></g>
-
-            <!-- Два углерода цепочки + азот -->
-            <g fill="url(#carbon)" stroke="#d2fffa" stroke-opacity=".30" stroke-width="2" filter="url(#glow)"><circle cx="477" cy="217" r="32"/><circle cx="527" cy="246" r="32"/></g>
-            <g fill="url(#nitrogen)" stroke="#d8fffb" stroke-opacity=".55" stroke-width="2" filter="url(#glow)"><circle cx="555" cy="218" r="34"/></g>
-            <text x="555" y="223" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle">NH₂</text>
-
-            <!-- Блики создают ощущение объёма -->
-            <g fill="#fff" opacity=".88"><circle cx="289" cy="183" r="5"/><circle cx="397" cy="245" r="5"/><circle cx="125" cy="185" r="4"/><circle cx="467" cy="206" r="4"/><circle cx="545" cy="207" r="4"/></g>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <footer>Концепт интерфейса · первый экран</footer>
-  </main>
-  <script src="app.js"></script>
+<main class="app">
+<header class="topbar"><div class="brand"><span class="dot"></span>dofamin</div><div class="tag">ПУТЬ К ВПЕЧАТЛЕНИЮ</div></header>
+<section class="hero">
+<div class="copy"><div class="eyebrow">не дейтинг. впечатление.</div><h1>Куда<br><span>сходить?</span></h1><p class="lead">Не выбирай из сотни вариантов. Пройди путь — и найди впечатление, которым захочется поделиться.</p><button class="start" id="start">Начать путь <b>→</b></button></div>
+<div class="stage">
+<div class="molecule" id="molecule">
+<div class="halo"></div>
+<svg viewBox="0 0 620 620" role="img" aria-label="Молекула дофамина">
+<defs>
+<radialGradient id="c" cx="27%" cy="18%"><stop stop-color="#fff"/><stop offset=".16" stop-color="#d8fffb"/><stop offset=".38" stop-color="#4ce9dc"/><stop offset=".72" stop-color="#5364ff"/><stop offset="1" stop-color="#21104f"/></radialGradient>
+<radialGradient id="o" cx="27%" cy="18%"><stop stop-color="#fff"/><stop offset=".2" stop-color="#ffc5df"/><stop offset=".58" stop-color="#ff668e"/><stop offset="1" stop-color="#681b58"/></radialGradient>
+<radialGradient id="n" cx="27%" cy="18%"><stop stop-color="#fff"/><stop offset=".25" stop-color="#d8fffb"/><stop offset=".58" stop-color="#4ce9dc"/><stop offset="1" stop-color="#2949aa"/></radialGradient>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d5fffb"/><stop offset=".34" stop-color="#4ce9dc"/><stop offset=".72" stop-color="#695dff"/><stop offset="1" stop-color="#b88aff"/></linearGradient>
+<filter id="g"><feGaussianBlur stdDeviation="6" result="x"/><feMerge><feMergeNode in="x"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="s"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#00052a" flood-opacity=".55"/></filter>
+</defs>
+<ellipse cx="310" cy="310" rx="210" ry="205" fill="#42e8dc" opacity=".065" filter="url(#g)"/>
+<g fill="none" stroke="url(#b)" stroke-linecap="round" filter="url(#s)"><path d="M310 180L423 245L423 375L310 440L197 375L197 245Z" stroke-width="17"/><path d="M310 205L401 257M401 363L310 415M219 363L219 257" stroke-width="8" opacity=".95"/><path d="M423 245L488 207L530 232L558 205" stroke-width="15"/><path d="M197 245L145 207M197 375L145 413" stroke-width="14"/></g>
+<g fill="url(#c)" stroke="#d2fffa" stroke-opacity=".32" stroke-width="2" filter="url(#g)"><circle cx="310" cy="180" r="37"/><circle cx="423" cy="245" r="37"/><circle cx="423" cy="375" r="37"/><circle cx="310" cy="440" r="37"/><circle cx="197" cy="375" r="37"/><circle cx="197" cy="245" r="37"/><circle cx="488" cy="207" r="34"/><circle cx="530" cy="232" r="34"/></g>
+<g fill="url(#o)" stroke="#ffd8e8" stroke-opacity=".48" stroke-width="2" filter="url(#g)"><circle cx="117" cy="185" r="33"/><circle cx="117" cy="435" r="33"/></g>
+<circle cx="558" cy="205" r="36" fill="url(#n)" stroke="#d8fffb" stroke-opacity=".5" stroke-width="2" filter="url(#g)"/>
+<g fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="800" text-anchor="middle"><text x="117" y="190">OH</text><text x="117" y="440">OH</text><text x="558" y="210">NH₂</text></g>
+<g fill="#fff" opacity=".88"><circle cx="299" cy="167" r="5"/><circle cx="411" cy="232" r="5"/><circle cx="129" cy="173" r="4"/><circle cx="478" cy="195" r="4"/><circle cx="548" cy="193" r="4"/></g>
+</svg>
+<div class="path"><div class="pathline"></div><button class="node n1" data-title="Настроение" data-text="Сначала выбираем, какого состояния хочется от этого выхода.">01<br>НАСТРОЕНИЕ</button><button class="node n2" data-title="Компания" data-text="Решаем, хочется ли разделить впечатление с кем-то или прожить его самому.">02<br>КОМПАНИЯ</button><button class="node n3" data-title="Готовность" data-text="Определяем, насколько сильно хочется выйти из привычного сценария.">03<br>РИСК</button><button class="node n4" data-title="Город" data-text="Теперь место становится частью маршрута, а не бесконечным каталогом.">04<br>ГОРОД</button><button class="node n5" data-title="Сюрприз" data-text="Убираем лишний контроль и оставляем место случайности.">05<br>СЮРПРИЗ</button><button class="node n6" data-title="Впечатление" data-text="Финальная точка — конкретный опыт, который хочется прожить.">06<br>ВПЕЧАТЛЕНИЕ</button></div>
+<div class="molecule-label"><div><strong>путь</strong><br>к впечатлению</div></div><div class="hint">нажми на точку пути</div>
+</div>
+<div class="info" id="info"><small id="infoStep">ШАГ</small><h2 id="infoTitle"></h2><p id="infoText"></p></div>
+</div>
+</section>
+<footer>DOFAMIN · не ищем человека — ищем впечатление</footer>
+</main>
+<script>
+const nodes=[...document.querySelectorAll('.node')],info=document.getElementById('info'),title=document.getElementById('infoTitle'),text=document.getElementById('infoText'),step=document.getElementById('infoStep');
+nodes.forEach((node,i)=>node.addEventListener('click',e=>{e.stopPropagation();nodes.forEach(n=>n.classList.remove('active'));node.classList.add('active');step.textContent=`ШАГ ${String(i+1).padStart(2,'0')}`;title.textContent=node.dataset.title;text.textContent=node.dataset.text;info.classList.add('show')}));
+document.getElementById('start').addEventListener('click',()=>{nodes[0].click();document.querySelector('.stage').scrollIntoView({behavior:'smooth',block:'center'})});
+</script>
 </body>
 </html>
