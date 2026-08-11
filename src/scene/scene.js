@@ -15,16 +15,8 @@ export function createAppScene(canvas) {
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
   camera.position.set(0, 0, 4.2);
   camera.lookAt(0, 0, 0);
-
   scene.add(new THREE.HemisphereLight(0x9bd8ff, 0x10051f, 1.5));
-
-  const debugSphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.18, 32, 32),
-    new THREE.MeshStandardMaterial({ color: 0xff5533 })
-  );
-  debugSphere.position.set(0, 0, 0);
-  scene.add(debugSphere);
-  debug.log('Scene object', true);
+  debug.log('Scene', true);
 
   const cameraController = createCameraController(camera, renderer);
   debug.log('Camera', true);
@@ -45,11 +37,7 @@ export function createAppScene(canvas) {
   resize();
 
   return {
-    scene,
-    camera,
-    renderer,
-    composer,
-    cameraController,
+    scene, camera, renderer, composer, cameraController,
     start() {
       const clock = new THREE.Clock();
       function loop() {
