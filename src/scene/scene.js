@@ -24,6 +24,8 @@ export function createAppScene(canvas) {
   const composer = createPostProcessing(renderer, scene, camera);
   debug.log('Composer', true);
 
+  const transitions = [];
+
   function resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -37,12 +39,13 @@ export function createAppScene(canvas) {
   resize();
 
   return {
-    scene, camera, renderer, composer, cameraController,
+    scene, camera, renderer, composer, cameraController, transitions,
     start() {
       const clock = new THREE.Clock();
       function loop() {
         const delta = clock.getDelta();
         cameraController.update(delta);
+        transitions.forEach(update => update(delta));
         composer.render();
         requestAnimationFrame(loop);
       }
