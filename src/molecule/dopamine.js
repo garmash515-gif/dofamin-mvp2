@@ -5,6 +5,19 @@ import { createMoleculeView } from './moleculeView.js';
 import { createEnergyPulse } from '../effects/energyFlow.js';
 import { apply3DConformation } from './conformation.js';
 
+// One visible atom = one meaningful step of the client journey.
+// Keep the mapping explicit so the visual molecule and product flow cannot drift apart.
+const JOURNEY_ATOMS = {
+  C1: { step: 'welcome', label: 'Начало' },
+  C2: { step: 'wishlist', label: 'Вишлист' },
+  C3: { step: 'red-flags', label: 'Красные флаги' },
+  C4: { step: 'mood', label: 'Ваше настроение' },
+  C7: { step: 'partner-link', label: 'Пригласить разделить' },
+  C8: { step: 'partner', label: 'Партнёр' },
+  N1: { step: 'match', label: 'Собираем ваш опыт' },
+  O1: { step: 'magic', label: 'Магия' }
+};
+
 export function createDopamineGraph() {
   const r = 0.58;
   const ring = [];
@@ -39,11 +52,20 @@ export function createDopamineMolecule(scene) {
   const molecule = createMoleculeView(graph);
   const atomMap = new Map();
   molecule.userData.atomMap = atomMap;
+  molecule.userData.journeyAtoms = JOURNEY_ATOMS;
 
   for (const data of graph.atoms) {
     const size = data.element === 'C' ? 0.105 : data.element === 'O' ? 0.13 : 0.065;
     const view = createAtom(data.element, data.position, size);
     view.userData.id = data.id;
+
+    const journey = JOURNEY_ATOMS[data.id];
+    if (journey) {
+      view.userData.journeyStep = journey.step;
+      view.userData.journeyLabel = journey.label;
+      view.userData.isJourneyAtom = true;
+    }
+
     atomMap.set(data.id, view);
     molecule.add(view);
   }
