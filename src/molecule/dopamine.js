@@ -4,9 +4,9 @@ import { createAtom } from './atom.js';
 import { createMoleculeView } from './moleculeView.js';
 import { createEnergyPulse } from '../effects/energyFlow.js';
 import { apply3DConformation } from './conformation.js';
+import { JOURNEY_LAYOUT, JOURNEY_ROUTE } from './moleculeLayout.js';
 
 // One visible atom = one meaningful step of the client journey.
-// Keep the mapping explicit so the visual molecule and product flow cannot drift apart.
 const JOURNEY_ATOMS = {
   C1: { step: 'welcome', label: 'Начало' },
   C2: { step: 'wishlist', label: 'Вишлист' },
@@ -36,6 +36,12 @@ export function createDopamineGraph() {
 
   apply3DConformation(atoms);
 
+  // Product layout is authoritative for journey atoms; chemistry remains intact.
+  for (const data of atoms) {
+    const layout = JOURNEY_LAYOUT[data.id];
+    if (layout) data.position = { x: layout.x, y: layout.y, z: layout.z };
+  }
+
   const bonds = [];
   const ringTypes = ['double', 'single', 'double', 'single', 'double', 'single'];
   for (let i = 0; i < 6; i++) bonds.push(bond(ring[i].id, ring[(i + 1) % 6].id, ringTypes[i]));
@@ -53,6 +59,7 @@ export function createDopamineMolecule(scene) {
   const atomMap = new Map();
   molecule.userData.atomMap = atomMap;
   molecule.userData.journeyAtoms = JOURNEY_ATOMS;
+  molecule.userData.journeyRoute = JOURNEY_ROUTE;
 
   for (const data of graph.atoms) {
     const size = data.element === 'C' ? 0.105 : data.element === 'O' ? 0.13 : 0.065;
@@ -64,6 +71,8 @@ export function createDopamineMolecule(scene) {
       view.userData.journeyStep = journey.step;
       view.userData.journeyLabel = journey.label;
       view.userData.isJourneyAtom = true;
+      view.userData.layout = JOURNEY_LAYOUT[data.id];
+      view.userData.journeyCenter = view.position;
     }
 
     atomMap.set(data.id, view);
@@ -80,6 +89,18 @@ export function createDopamineMolecule(scene) {
       return createEnergyPulse(start.position, end.position);
     }});
   }
+
+  // Journey route bonds are explicitly addressable by atom pair.
+  molecule.userData.journeyBonds = JOURNEY_ROUTE.map(([from, to]) => ({
+    from,
+    to,
+    start: atomMap.get(from),
+    end: atomMap.get(to),
+    object: viewBonds.find(b =>
+      (b.start === atomMap.get(from) && b.end === atomMap.get(to)) ||
+      (b.start === atomMap.get(to) && b.end === atomMap.get(from))
+    )?.object || null
+  }));
 
   molecule.userData.bonds = viewBonds;
   scene.add(molecule);
