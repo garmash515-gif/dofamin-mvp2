@@ -2,7 +2,7 @@ import { createAppScene } from './scene/scene.js?v=13.8.2';
 import { createDopamineMolecule } from './molecule/dopamine.js?v=13.8.2';
 import { createFireflies } from './effects/fireflies.js?v=13.8.2';
 import { playMoleculeIntro } from './effects/transitions.js';
-import { createAtomInteraction } from './interaction/atomInteraction.js?v=15.4.3';
+import { createAtomInteraction } from './interaction/atomInteraction.js?v=15.5.0';
 import { createProjectOverlay } from './ui/projectOverlay.js';
 import { JOURNEY_STEPS } from './journey/journeyEngine.js';
 import { createJourneyRuntime } from './journey/journeyRuntime.js';
