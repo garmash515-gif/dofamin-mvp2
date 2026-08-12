@@ -38,15 +38,21 @@ function createBondView(start, end, type = 'single') {
   const group = new THREE.Group();
   const radius = type === 'double' ? 0.022 : 0.028;
 
-  group.add(cylinderBetween(start.position, end.position, radius, material));
+  const rebuild = () => {
+    group.clear();
+    group.add(cylinderBetween(start.position, end.position, radius, material));
 
-  if (type === 'double') {
-    group.add(cylinderBetween(start.position, end.position, radius, material, 0.04));
-  }
+    if (type === 'double') {
+      group.add(cylinderBetween(start.position, end.position, radius, material, 0.04));
+    }
+  };
+
+  rebuild();
 
   group.userData.from = start;
   group.userData.to = end;
   group.userData.type = type;
+  group.userData.update = rebuild;
 
   return group;
 }
