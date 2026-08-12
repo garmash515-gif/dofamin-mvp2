@@ -8,6 +8,25 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     window.dispatchEvent(new CustomEvent('debug-log', { detail: message }));
   }
 
+  function syncBonds() {
+    (molecule.userData.bonds || []).forEach((bond) => {
+      if (bond.object?.userData?.update) bond.object.userData.update();
+    });
+  }
+
+  function rotateForView(atom) {
+    const center = new THREE.Vector3();
+    molecule.getWorldPosition(center);
+
+    const direction = atom.position.clone().sub(center).normalize();
+    const targetY = Math.atan2(direction.x, direction.z);
+    const targetX = -Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z));
+
+    molecule.rotation.y += (targetY - molecule.rotation.y) * 0.18;
+    molecule.rotation.x += (targetX - molecule.rotation.x) * 0.18;
+    syncBonds();
+  }
+
   function showAtomCard(atom) {
     window.dispatchEvent(new CustomEvent('atom-active', {
       detail: { type: atom.userData.type || 'ATOM', energy: '+20%', focus: '+15%' }
@@ -32,6 +51,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     const material = atom.userData.material || atom.children[0]?.material;
     if (material?.emissiveIntensity !== undefined) material.emissiveIntensity = 3.5;
 
+    rotateForView(atom);
     pulse(atom);
     showAtomCard(atom);
 
