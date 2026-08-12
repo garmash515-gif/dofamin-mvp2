@@ -1,4 +1,4 @@
-import { createGridOverlay } from './GridOverlay.js';
+import { createGridOverlay } from '../grid/GridOverlay.js';
 
 /**
  * ReferenceGridViewer
