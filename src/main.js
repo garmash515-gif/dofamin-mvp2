@@ -5,6 +5,7 @@ import { playMoleculeIntro } from './effects/transitions.js';
 import { createAtomInteraction } from './interaction/atomInteraction.js?v=15.4.3';
 import { createProjectOverlay } from './ui/projectOverlay.js';
 import { JOURNEY_STEPS } from './journey/journeyEngine.js';
+import { createJourneyRuntime } from './journey/journeyRuntime.js';
 
 const app = createAppScene(document.querySelector('#stage'));
 const molecule = createDopamineMolecule(app.scene);
@@ -18,11 +19,18 @@ const intro = playMoleculeIntro(molecule.molecule);
 app.transitions = [intro];
 app.cameraController.showMolecule(molecule.molecule, 1.35);
 
+const journeyRuntime = createJourneyRuntime({
+  cameraController: app.cameraController
+});
+
+window.DOPAMIN_JOURNEY_RUNTIME = journeyRuntime;
+
 createAtomInteraction({
   camera: app.camera,
   renderer: app.renderer,
   molecule: molecule.molecule,
-  cameraController: app.cameraController
+  cameraController: app.cameraController,
+  onJourneyComplete: () => journeyRuntime.completeCurrentStep()
 });
 
 app.start();
