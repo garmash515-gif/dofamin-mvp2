@@ -5,8 +5,6 @@ import { playMoleculeIntro } from './effects/transitions.js';
 import { createAtomInteraction } from './interaction/atomInteraction.js?v=15.4.3';
 import { createProjectOverlay } from './ui/projectOverlay.js';
 
-import './ui/projectOverlay.css';
-
 const app = createAppScene(document.querySelector('#stage'));
 
 const molecule = createDopamineMolecule(app.scene);
