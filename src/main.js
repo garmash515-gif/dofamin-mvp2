@@ -6,9 +6,17 @@ import { createAtomInteraction } from './interaction/atomInteraction.js?v=15.5.0
 import { createProjectOverlay } from './ui/projectOverlay.js';
 import { JOURNEY_STEPS } from './journey/journeyEngine.js';
 import { createJourneyRuntime } from './journey/journeyRuntime.js';
+import { injectRuntimePreview } from './world/runtimeSceneInjection.js';
 
 const app = createAppScene(document.querySelector('#stage'));
 const molecule = createDopamineMolecule(app.scene);
+
+// Runtime migration bridge: attach new world objects without removing legacy scene.
+window.DOPAMIN_RUNTIME_PREVIEW = injectRuntimePreview({
+  scene: app.scene,
+  stepId: 'CORE'
+});
+
 createFireflies(app.scene);
 createProjectOverlay();
 
