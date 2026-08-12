@@ -4,6 +4,10 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
 
+  function log(message) {
+    window.dispatchEvent(new CustomEvent('debug-log', { detail: message }));
+  }
+
   function activate(atom) {
     atom.scale.setScalar(1.35);
     atom.userData.active = true;
@@ -13,9 +17,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
       material.emissiveIntensity = 2.5;
     }
 
-    window.dispatchEvent(new CustomEvent('debug-log', {
-      detail: `ATOM ACTIVE: ${atom.userData.type || 'unknown'}`
-    }));
+    log(`ATOM ACTIVE: ${atom.userData.type || 'unknown'}`);
   }
 
   function onPointer(event) {
@@ -26,28 +28,28 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     raycaster.setFromCamera(pointer, camera);
     const hits = raycaster.intersectObjects(molecule.children, true);
 
-    const hit = hits.find(item => {
-      return item.object.parent?.userData?.type || item.object.userData?.type;
-    });
+    const hit = hits.find(item => item.object.parent?.userData?.type || item.object.userData?.type);
 
     if (!hit) {
-      window.dispatchEvent(new CustomEvent('debug-log', { detail: 'TAP: no atom' }));
+      log('TAP: no atom');
       return;
     }
 
-    const atom = hit.object.parent?.userData?.type
-      ? hit.object.parent
-      : hit.object;
+    const atom = hit.object.parent?.userData?.type ? hit.object.parent : hit.object;
 
     activate(atom);
-    cameraController.focusObject(atom, 1.4);
+
+    if (cameraController?.focusPoint) {
+      cameraController.focusPoint(atom.position, 1.4, true);
+      log('CAMERA: focus point');
+    } else {
+      log('CAMERA: focus unavailable');
+    }
   }
 
   renderer.domElement.addEventListener('pointerdown', onPointer);
 
-  window.dispatchEvent(new CustomEvent('debug-log', {
-    detail: 'INPUT: atom interaction ready'
-  }));
+  log('INPUT: atom interaction ready');
 
   return { activate };
 }
