@@ -10,20 +10,28 @@ export function createEnergyPulse(start, end) {
   });
 
   const pulse = new THREE.Mesh(geometry, material);
+  pulse.position.copy(start);
   pulse.userData = {
     start: start.clone(),
     end: end.clone(),
-    progress: 0
+    progress: 0,
+    speed: 0.9,
+    alive: true
   };
 
   return pulse;
 }
 
-export function updateEnergyPulse(pulse, delta = 0.01) {
-  pulse.userData.progress += delta;
+export function updateEnergyPulse(pulse, delta = 0.016) {
+  if (!pulse?.userData?.alive) return false;
 
-  if (pulse.userData.progress > 1) {
-    pulse.userData.progress = 0;
+  pulse.userData.progress += delta * pulse.userData.speed;
+
+  if (pulse.userData.progress >= 1) {
+    pulse.userData.progress = 1;
+    pulse.userData.alive = false;
+    pulse.material.opacity = 0;
+    return false;
   }
 
   pulse.position.lerpVectors(
@@ -31,4 +39,7 @@ export function updateEnergyPulse(pulse, delta = 0.01) {
     pulse.userData.end,
     pulse.userData.progress
   );
+
+  pulse.scale.setScalar(1 + Math.sin(pulse.userData.progress * Math.PI) * 0.8);
+  return true;
 }
