@@ -10,25 +10,18 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
   function showAtomCard(atom) {
     window.dispatchEvent(new CustomEvent('atom-active', {
-      detail: {
-        type: atom.userData.type || 'ATOM',
-        energy: '+20%',
-        focus: '+15%'
-      }
+      detail: { type: atom.userData.type || 'ATOM', energy: '+20%', focus: '+15%' }
     }));
   }
 
   function pulse(atom) {
     const start = performance.now();
     const base = atom.scale.x;
-
     function animate(time) {
       const t = Math.min((time - start) / 500, 1);
-      const wave = 1 + Math.sin(t * Math.PI) * 0.25;
-      atom.scale.setScalar(base * wave);
+      atom.scale.setScalar(base * (1 + Math.sin(t * Math.PI) * 0.25));
       if (t < 1) requestAnimationFrame(animate);
     }
-
     requestAnimationFrame(animate);
   }
 
@@ -37,12 +30,19 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     atom.userData.active = true;
 
     const material = atom.userData.material || atom.children[0]?.material;
-    if (material && material.emissiveIntensity !== undefined) {
-      material.emissiveIntensity = 3.5;
-    }
+    if (material?.emissiveIntensity !== undefined) material.emissiveIntensity = 3.5;
 
     pulse(atom);
     showAtomCard(atom);
+
+    const bonds = molecule.userData.bonds || [];
+    bonds.filter(b => b.start === atom || b.end === atom).forEach((b, i) => {
+      setTimeout(() => {
+        if (b.trigger) b.trigger();
+        log(`ENERGY PULSE: ${b.type || 'bond'}`);
+      }, i * 120);
+    });
+
     log(`ATOM ACTIVE: ${atom.userData.type || 'unknown'}`);
   }
 
@@ -55,10 +55,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     const hits = raycaster.intersectObjects(molecule.children, true);
     const hit = hits.find(item => item.object.parent?.userData?.type || item.object.userData?.type);
 
-    if (!hit) {
-      log('TAP: no atom');
-      return;
-    }
+    if (!hit) return log('TAP: no atom');
 
     const atom = hit.object.parent?.userData?.type ? hit.object.parent : hit.object;
     activate(atom);
@@ -71,6 +68,5 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
   renderer.domElement.addEventListener('pointerdown', onPointer);
   log('INPUT: atom interaction ready');
-
   return { activate };
 }
