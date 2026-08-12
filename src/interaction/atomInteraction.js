@@ -2,11 +2,13 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.m
 import { createCameraAnchor, focusFromAnchor } from '../camera/cameraAnchors.js';
 import { getStep } from '../journey/journeyEngine.js';
 import { createJourneyTransition, startJourneyTransition } from '../journey/journeyTransition.js';
+import { updateAtomEnergy } from '../molecule/atom.js';
 
 export function createAtomInteraction({ camera, renderer, molecule, cameraController }) {
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   const activePulses = [];
+  let activeAtom = null;
 
   function log(message) {
     window.dispatchEvent(new CustomEvent('debug-log', { detail: message }));
@@ -18,21 +20,52 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     });
   }
 
-  function updateVisualState(atom) {
-    atom.scale.setScalar(1.35);
-    atom.userData.active = true;
+  function getAtomViews() {
+    const map = molecule.userData.atomMap;
+    if (map) return Object.fromEntries(map.entries());
+    return Object.fromEntries(
+      molecule.children
+        .filter(child => child?.userData?.journeyStep)
+        .map(child => [child.userData.id, child])
+    );
+  }
 
-    const material = atom.userData.material || atom.children[0]?.material;
-    if (material?.emissiveIntensity !== undefined) {
-      material.emissiveIntensity = 3.5;
+  function setActiveVisual(atom) {
+    if (activeAtom && activeAtom !== atom) {
+      activeAtom.userData.active = false;
+      updateAtomEnergy(activeAtom, performance.now() / 1000, false);
+      activeAtom.scale.setScalar(1);
     }
+
+    activeAtom = atom;
+    atom.userData.active = true;
+    atom.userData.available = false;
+    atom.scale.setScalar(1.35);
+
+    const material = atom.userData.material;
+    if (material) {
+      material.emissiveIntensity = Math.max(
+        atom.userData.baseEmissiveIntensity ?? 0.04,
+        3.8
+      );
+    }
+  }
+
+  function markNextAvailable(atomId) {
+    const map = molecule.userData.atomMap;
+    const next = getAtomViews()[atomId];
+    if (!next || next === activeAtom) return;
+
+    next.userData.available = true;
+    next.userData.active = false;
+    next.userData.journeyState = 'available';
   }
 
   function activate(atom) {
     const journeyStep = atom.userData.journeyStep;
     if (!journeyStep) return log(`ТАП: технический атом ${atom.userData.id || 'неизвестный'}`);
 
-    updateVisualState(atom);
+    setActiveVisual(atom);
 
     const anchor = atom.userData.cameraAnchor || createCameraAnchor(atom);
     atom.userData.cameraAnchor = anchor;
@@ -40,14 +73,10 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     syncBonds();
 
     const step = getStep(journeyStep);
+    if (!step) return log(`JOURNEY: этап не найден ${journeyStep}`);
 
     window.dispatchEvent(new CustomEvent('journey-step-active', {
-      detail: {
-        step,
-        stepId: step.id,
-        atomId: atom.userData.id,
-        label: atom.userData.journeyLabel
-      }
+      detail: { step, stepId: step.id, atomId: atom.userData.id, label: atom.userData.journeyLabel }
     }));
 
     window.dispatchEvent(new CustomEvent('atom-active', {
@@ -60,23 +89,24 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
       }
     }));
 
-    const transition = createJourneyTransition(journeyStep, {
-      [atom.userData.id]: atom
-    });
+    const transition = createJourneyTransition(journeyStep, getAtomViews());
+
+    if (!transition) {
+      log(`JOURNEY: переход не создан для ${journeyStep}`);
+      return;
+    }
 
     const pulse = startJourneyTransition(transition);
     if (pulse) {
       activePulses.push(pulse);
       molecule.add(pulse);
-      window.dispatchEvent(new CustomEvent('energy-started', {
-        detail: transition
-      }));
+      window.dispatchEvent(new CustomEvent('energy-started', { detail: transition }));
+      markNextAvailable(transition.toAtom);
+      log(`ЭНЕРГИЯ: ${transition.fromAtom} → ${transition.toAtom}`);
+    } else if (transition.terminal) {
+      window.dispatchEvent(new CustomEvent('journey-complete', { detail: transition }));
+      log('JOURNEY: МАГИЯ — финальный этап');
     }
-
-    log(`ЭТАП: ${step.title}`);
-    log(`АТОМ: ${atom.userData.id}`);
-    log('КАМЕРА: якорь фокуса');
-    log('ЭНЕРГИЯ: переход запущен');
 
     const bonds = molecule.userData.bonds || [];
     bonds.filter(b => b.start === atom || b.end === atom).forEach((b, i) => {
@@ -96,16 +126,60 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
     raycaster.setFromCamera(pointer, camera);
     const hits = raycaster.intersectObjects(molecule.children, true);
-    const hit = hits.find(item => item.object.parent?.userData?.type || item.object.userData?.type);
+    const hit = hits.find(item => {
+      const group = item.object.parent;
+      return item.object.userData?.journeyStep || group?.userData?.journeyStep;
+    });
 
     if (!hit) return log('ТАП: атом не найден');
 
-    const atom = hit.object.parent?.userData?.type ? hit.object.parent : hit.object;
+    const atom = hit.object.userData?.journeyStep ? hit.object : hit.object.parent;
     activate(atom);
   }
 
+  function animate(time) {
+    const now = time / 1000;
+    for (let i = activePulses.length - 1; i >= 0; i--) {
+      const pulse = activePulses[i];
+      if (!pulse.parent) {
+        activePulses.splice(i, 1);
+        continue;
+      }
+
+      const alive = pulse.userData?.alive;
+      if (alive) {
+        const progressBefore = pulse.userData.progress;
+        const stillAlive = pulse.userData?.start && pulse.userData?.end
+          ? (() => {
+              pulse.userData.progress += 0.016 * pulse.userData.speed;
+              if (pulse.userData.progress >= 1) {
+                pulse.userData.progress = 1;
+                pulse.userData.alive = false;
+                pulse.material.opacity = 0;
+                return false;
+              }
+              pulse.position.lerpVectors(pulse.userData.start, pulse.userData.end, pulse.userData.progress);
+              pulse.scale.setScalar(1 + Math.sin(pulse.userData.progress * Math.PI) * 0.8);
+              return true;
+            })()
+          : false;
+
+        if (!stillAlive) {
+          pulse.removeFromParent();
+          activePulses.splice(i, 1);
+          window.dispatchEvent(new CustomEvent('energy-finished', { detail: pulse.userData }));
+          continue;
+        }
+      }
+    }
+
+    if (activeAtom) updateAtomEnergy(activeAtom, now, true);
+    requestAnimationFrame(animate);
+  }
+
   renderer.domElement.addEventListener('pointerdown', onPointer);
-  log('ВВОД: управление атомами + JOURNEY TRANSITION готово');
+  requestAnimationFrame(animate);
+  log('ВВОД: атомы + JOURNEY + ENERGY runtime подключены');
 
   return { activate, activePulses };
 }
