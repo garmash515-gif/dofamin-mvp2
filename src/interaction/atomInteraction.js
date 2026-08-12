@@ -1,10 +1,12 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 import { createCameraAnchor, focusFromAnchor } from '../camera/cameraAnchors.js';
 import { getStep } from '../journey/journeyEngine.js';
+import { createJourneyTransition, startJourneyTransition } from '../journey/journeyTransition.js';
 
 export function createAtomInteraction({ camera, renderer, molecule, cameraController }) {
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
+  const activePulses = [];
 
   function log(message) {
     window.dispatchEvent(new CustomEvent('debug-log', { detail: message }));
@@ -16,15 +18,21 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     });
   }
 
-  function activate(atom) {
-    const journeyStep = atom.userData.journeyStep;
-    if (!journeyStep) return log(`ТАП: технический атом ${atom.userData.id || 'неизвестный'}`);
-
+  function updateVisualState(atom) {
     atom.scale.setScalar(1.35);
     atom.userData.active = true;
 
     const material = atom.userData.material || atom.children[0]?.material;
-    if (material?.emissiveIntensity !== undefined) material.emissiveIntensity = 3.5;
+    if (material?.emissiveIntensity !== undefined) {
+      material.emissiveIntensity = 3.5;
+    }
+  }
+
+  function activate(atom) {
+    const journeyStep = atom.userData.journeyStep;
+    if (!journeyStep) return log(`ТАП: технический атом ${atom.userData.id || 'неизвестный'}`);
+
+    updateVisualState(atom);
 
     const anchor = atom.userData.cameraAnchor || createCameraAnchor(atom);
     atom.userData.cameraAnchor = anchor;
@@ -32,6 +40,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     syncBonds();
 
     const step = getStep(journeyStep);
+
     window.dispatchEvent(new CustomEvent('journey-step-active', {
       detail: {
         step,
@@ -51,9 +60,23 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
       }
     }));
 
+    const transition = createJourneyTransition(journeyStep, {
+      [atom.userData.id]: atom
+    });
+
+    const pulse = startJourneyTransition(transition);
+    if (pulse) {
+      activePulses.push(pulse);
+      molecule.add(pulse);
+      window.dispatchEvent(new CustomEvent('energy-started', {
+        detail: transition
+      }));
+    }
+
     log(`ЭТАП: ${step.title}`);
     log(`АТОМ: ${atom.userData.id}`);
     log('КАМЕРА: якорь фокуса');
+    log('ЭНЕРГИЯ: переход запущен');
 
     const bonds = molecule.userData.bonds || [];
     bonds.filter(b => b.start === atom || b.end === atom).forEach((b, i) => {
@@ -82,6 +105,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
   }
 
   renderer.domElement.addEventListener('pointerdown', onPointer);
-  log('ВВОД: управление атомами готово');
-  return { activate };
+  log('ВВОД: управление атомами + JOURNEY TRANSITION готово');
+
+  return { activate, activePulses };
 }
