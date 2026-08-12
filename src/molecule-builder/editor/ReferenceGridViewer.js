@@ -48,3 +48,12 @@ export function addCalibrationPoint(viewer, point) {
   viewer.calibrationPoints.push(marker);
   return marker;
 }
+
+export function updateCalibrationTransform(viewer, transform = {}) {
+  viewer.transform = {
+    ...viewer.transform,
+    ...transform
+  };
+
+  return viewer.transform;
+}
