@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
+import { createCameraAnchor, focusFromAnchor } from '../camera/cameraAnchors.js';
 
 export function createAtomInteraction({ camera, renderer, molecule, cameraController }) {
   const raycaster = new THREE.Raycaster();
@@ -14,36 +15,6 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     });
   }
 
-  function rotateForView(atom) {
-    const center = new THREE.Vector3();
-    molecule.getWorldPosition(center);
-
-    const direction = atom.position.clone().sub(center).normalize();
-    const targetY = Math.atan2(direction.x, direction.z);
-    const targetX = -Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z));
-
-    molecule.rotation.y += (targetY - molecule.rotation.y) * 0.18;
-    molecule.rotation.x += (targetX - molecule.rotation.x) * 0.18;
-    syncBonds();
-  }
-
-  function showAtomCard(atom) {
-    window.dispatchEvent(new CustomEvent('atom-active', {
-      detail: { type: atom.userData.type || 'ATOM', energy: '+20%', focus: '+15%' }
-    }));
-  }
-
-  function pulse(atom) {
-    const start = performance.now();
-    const base = atom.scale.x;
-    function animate(time) {
-      const t = Math.min((time - start) / 500, 1);
-      atom.scale.setScalar(base * (1 + Math.sin(t * Math.PI) * 0.25));
-      if (t < 1) requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-  }
-
   function activate(atom) {
     atom.scale.setScalar(1.35);
     atom.userData.active = true;
@@ -51,19 +22,22 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     const material = atom.userData.material || atom.children[0]?.material;
     if (material?.emissiveIntensity !== undefined) material.emissiveIntensity = 3.5;
 
-    rotateForView(atom);
-    pulse(atom);
-    showAtomCard(atom);
+    const anchor = atom.userData.cameraAnchor || createCameraAnchor(atom);
+    atom.userData.cameraAnchor = anchor;
+
+    focusFromAnchor(cameraController, anchor);
+
+    window.dispatchEvent(new CustomEvent('atom-active', {
+      detail: { type: atom.userData.type || 'ATOM', energy: '+20%', focus: '+15%' }
+    }));
+
+    log(`ATOM ACTIVE: ${atom.userData.type || 'unknown'}`);
+    log('CAMERA: anchor focus');
 
     const bonds = molecule.userData.bonds || [];
     bonds.filter(b => b.start === atom || b.end === atom).forEach((b, i) => {
-      setTimeout(() => {
-        if (b.trigger) b.trigger();
-        log(`ENERGY PULSE: ${b.type || 'bond'}`);
-      }, i * 120);
+      setTimeout(() => b.trigger?.(), i * 120);
     });
-
-    log(`ATOM ACTIVE: ${atom.userData.type || 'unknown'}`);
   }
 
   function onPointer(event) {
@@ -79,14 +53,9 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
     const atom = hit.object.parent?.userData?.type ? hit.object.parent : hit.object;
     activate(atom);
-
-    if (cameraController?.focusPoint) {
-      cameraController.focusPoint(atom.position, 1.4, true);
-      log('CAMERA: focus point');
-    }
   }
 
   renderer.domElement.addEventListener('pointerdown', onPointer);
-  log('INPUT: atom interaction ready');
+  log('INPUT: anchor interaction ready');
   return { activate };
 }
