@@ -9,9 +9,16 @@ export function createReferencePlane(scene, {
   const geometry = new THREE.PlaneGeometry(10, 10);
   const material = new THREE.MeshBasicMaterial({
     map: texture,
-    transparent: true
+    transparent: true,
+    opacity: 0.2,
+    side: THREE.DoubleSide
   });
+
   const mesh = new THREE.Mesh(geometry, material);
+
+  // Reference lives on the calibration plane, not inside the camera.
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.z = -2;
 
   scene.add(mesh);
 
