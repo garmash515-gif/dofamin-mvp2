@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export function createReferenceImage(scene, {
-  url = './assets/dopamine-reference.png',
+  url = '/dofamin-mvp2/dopamine-reference.png',
   transform = {}
 } = {}) {
   if (!scene) return null;
