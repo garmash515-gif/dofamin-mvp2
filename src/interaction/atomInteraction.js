@@ -1,6 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 import { createCameraAnchor, focusFromAnchor } from '../camera/cameraAnchors.js';
-import { getJourneyStep } from '../journey/journeyEngine.js';
+import { getStep } from '../journey/journeyEngine.js';
 
 export function createAtomInteraction({ camera, renderer, molecule, cameraController }) {
   const raycaster = new THREE.Raycaster();
@@ -18,7 +18,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
   function activate(atom) {
     const journeyStep = atom.userData.journeyStep;
-    if (!journeyStep) return log(`ТАП: технический атом ${atom.userData.id || 'unknown'}`);
+    if (!journeyStep) return log(`ТАП: технический атом ${atom.userData.id || 'неизвестный'}`);
 
     atom.scale.setScalar(1.35);
     atom.userData.active = true;
@@ -31,7 +31,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     focusFromAnchor(cameraController, anchor);
     syncBonds();
 
-    const step = getJourneyStep(journeyStep);
+    const step = getStep(journeyStep);
     window.dispatchEvent(new CustomEvent('journey-step-active', {
       detail: {
         step,
@@ -43,7 +43,7 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
     window.dispatchEvent(new CustomEvent('atom-active', {
       detail: {
-        type: atom.userData.type || 'ATOM',
+        type: atom.userData.type || 'АТОМ',
         energy: '+20%',
         focus: '+15%',
         journeyStep: step.id,
@@ -53,12 +53,10 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
     log(`ЭТАП: ${step.title}`);
     log(`АТОМ: ${atom.userData.id}`);
-    log('КАМЕРА: anchor focus');
+    log('КАМЕРА: якорь фокуса');
 
-    // The connection itself is the transition. Pulse all journey-relevant
-    // bonds from the active atom, in sequence, so the path reads as movement.
     const bonds = molecule.userData.bonds || [];
-    bonds.filter(b => (b.start === atom || b.end === atom)).forEach((b, i) => {
+    bonds.filter(b => b.start === atom || b.end === atom).forEach((b, i) => {
       setTimeout(() => {
         b.trigger?.();
         window.dispatchEvent(new CustomEvent('journey-link-active', {
