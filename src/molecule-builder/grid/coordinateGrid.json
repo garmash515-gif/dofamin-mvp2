@@ -1,0 +1,20 @@
+{
+  "name": "dopamine-reference-grid",
+  "version": "1.0",
+  "origin": [0, 0, 0],
+  "scale": 1,
+  "axes": {
+    "x": true,
+    "y": true,
+    "z": true
+  },
+  "grid": {
+    "step": 1,
+    "visible": true,
+    "snap": true
+  },
+  "projection": {
+    "referencePlane": "XY",
+    "depthAxis": "Z"
+  }
+}
