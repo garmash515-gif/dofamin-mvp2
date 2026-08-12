@@ -1,0 +1,9 @@
+{
+  "image": "dopamine-reference.png",
+  "imageSize": [1200, 800],
+  "origin": [0, 0, 0],
+  "scale": 1,
+  "rotation": 0,
+  "projection": "XY",
+  "notes": "Reference alignment layer for dopamine molecule coordinate construction"
+}
