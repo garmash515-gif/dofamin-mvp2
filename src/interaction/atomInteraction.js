@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 import { createCameraAnchor, focusFromAnchor } from '../camera/cameraAnchors.js';
+import { getJourneyStep } from '../journey/journeyEngine.js';
 
 export function createAtomInteraction({ camera, renderer, molecule, cameraController }) {
   const raycaster = new THREE.Raycaster();
@@ -16,6 +17,9 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
   }
 
   function activate(atom) {
+    const journeyStep = atom.userData.journeyStep;
+    if (!journeyStep) return log(`ТАП: технический атом ${atom.userData.id || 'unknown'}`);
+
     atom.scale.setScalar(1.35);
     atom.userData.active = true;
 
@@ -24,19 +28,43 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
 
     const anchor = atom.userData.cameraAnchor || createCameraAnchor(atom);
     atom.userData.cameraAnchor = anchor;
-
     focusFromAnchor(cameraController, anchor);
+    syncBonds();
 
-    window.dispatchEvent(new CustomEvent('atom-active', {
-      detail: { type: atom.userData.type || 'ATOM', energy: '+20%', focus: '+15%' }
+    const step = getJourneyStep(journeyStep);
+    window.dispatchEvent(new CustomEvent('journey-step-active', {
+      detail: {
+        step,
+        stepId: step.id,
+        atomId: atom.userData.id,
+        label: atom.userData.journeyLabel
+      }
     }));
 
-    log(`ATOM ACTIVE: ${atom.userData.type || 'unknown'}`);
-    log('CAMERA: anchor focus');
+    window.dispatchEvent(new CustomEvent('atom-active', {
+      detail: {
+        type: atom.userData.type || 'ATOM',
+        energy: '+20%',
+        focus: '+15%',
+        journeyStep: step.id,
+        title: step.title
+      }
+    }));
 
+    log(`ЭТАП: ${step.title}`);
+    log(`АТОМ: ${atom.userData.id}`);
+    log('КАМЕРА: anchor focus');
+
+    // The connection itself is the transition. Pulse all journey-relevant
+    // bonds from the active atom, in sequence, so the path reads as movement.
     const bonds = molecule.userData.bonds || [];
-    bonds.filter(b => b.start === atom || b.end === atom).forEach((b, i) => {
-      setTimeout(() => b.trigger?.(), i * 120);
+    bonds.filter(b => (b.start === atom || b.end === atom)).forEach((b, i) => {
+      setTimeout(() => {
+        b.trigger?.();
+        window.dispatchEvent(new CustomEvent('journey-link-active', {
+          detail: { from: atom.userData.id, bond: b, journeyStep: step.id }
+        }));
+      }, i * 140);
     });
   }
 
@@ -49,13 +77,13 @@ export function createAtomInteraction({ camera, renderer, molecule, cameraContro
     const hits = raycaster.intersectObjects(molecule.children, true);
     const hit = hits.find(item => item.object.parent?.userData?.type || item.object.userData?.type);
 
-    if (!hit) return log('TAP: no atom');
+    if (!hit) return log('ТАП: атом не найден');
 
     const atom = hit.object.parent?.userData?.type ? hit.object.parent : hit.object;
     activate(atom);
   }
 
   renderer.domElement.addEventListener('pointerdown', onPointer);
-  log('INPUT: anchor interaction ready');
+  log('ВВОД: управление атомами готово');
   return { activate };
 }
