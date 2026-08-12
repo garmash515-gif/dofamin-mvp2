@@ -1,10 +1,10 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js';
 
 const MATERIALS = {
-  C: { color: 0x405060, emissive: 0x061015, intensity: 0.04, roughness: 0.22, size: 0.34 },
-  O: { color: 0xc43b4d, emissive: 0xff334f, intensity: 0.35, roughness: 0.16, size: 0.38 },
-  N: { color: 0x326fd1, emissive: 0x164fbb, intensity: 0.10, roughness: 0.18, size: 0.36 },
-  H: { color: 0xd5edf5, emissive: 0x12323d, intensity: 0.04, roughness: 0.22, size: 0.18 }
+  C: { color: 0x506070, emissive: 0x061015, intensity: 0.04, roughness: 0.22, size: 0.44 },
+  O: { color: 0xc43b4d, emissive: 0xff334f, intensity: 0.18, roughness: 0.16, size: 0.48 },
+  N: { color: 0x326fd1, emissive: 0x164fbb, intensity: 0.08, roughness: 0.18, size: 0.46 },
+  H: { color: 0xd5edf5, emissive: 0x12323d, intensity: 0.03, roughness: 0.22, size: 0.22 }
 };
 
 export function createAtom(type, position, size = null) {
