@@ -6,7 +6,7 @@ import { createEnergyPulse } from '../effects/energyFlow.js';
 import { apply3DConformation } from './conformation.js';
 
 export function createDopamineGraph() {
-  const r = 0.72;
+  const r = 0.58;
   const ring = [];
   for (let i = 0; i < 6; i++) {
     const a = Math.PI / 2 + i * Math.PI / 3;
@@ -14,11 +14,11 @@ export function createDopamineGraph() {
   }
 
   const atoms = [...ring,
-    atom('O1', 'O', { x: -0.36, y: 1.14, z: 0 }), atom('H_O1', 'H', { x: -0.36, y: 1.43, z: 0 }),
-    atom('O2', 'O', { x: -0.98, y: 0.42, z: 0 }), atom('H_O2', 'H', { x: -1.24, y: 0.56, z: 0 }),
-    atom('C7', 'C', { x: 0.98, y: -1.14, z: 0 }), atom('C8', 'C', { x: 1.38, y: -1.82, z: 0 }),
-    atom('N1', 'N', { x: 1.78, y: -2.50, z: 0 }), atom('H_N1', 'H', { x: 2.05, y: -2.76, z: 0 }),
-    atom('H_C3', 'H', { x: -0.98, y: -0.42, z: 0 }), atom('H_C5', 'H', { x: 0.98, y: 0.42, z: 0 }), atom('H_C6', 'H', { x: 1.24, y: 1.00, z: 0 })
+    atom('O1', 'O', { x: -0.29, y: 0.92, z: 0 }), atom('H_O1', 'H', { x: -0.29, y: 1.12, z: 0 }),
+    atom('O2', 'O', { x: -0.78, y: 0.34, z: 0 }), atom('H_O2', 'H', { x: -0.98, y: 0.45, z: 0 }),
+    atom('C7', 'C', { x: 0.78, y: -0.92, z: 0 }), atom('C8', 'C', { x: 1.12, y: -1.46, z: 0 }),
+    atom('N1', 'N', { x: 1.44, y: -2.00, z: 0 }), atom('H_N1', 'H', { x: 1.65, y: -2.22, z: 0 }),
+    atom('H_C3', 'H', { x: -0.78, y: -0.34, z: 0 }), atom('H_C5', 'H', { x: 0.78, y: 0.34, z: 0 }), atom('H_C6', 'H', { x: 0.98, y: 0.80, z: 0 })
   ];
 
   apply3DConformation(atoms);
